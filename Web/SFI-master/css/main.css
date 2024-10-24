@@ -1,4 +1,4 @@
-/* Copyright 2016 Carlos Eduardo Alfaro Orellana*/
+
 /*=====================================================
 					Tipografia
 ======================================================*/
@@ -71,7 +71,7 @@ html, body{
 	background-repeat: no-repeat;
 	background-position: center center;
 	background-color: #fff;
-	background-image: url(../assets/img/fontLogin.jpg);
+	background-image: url(../assets/img/BackLogin.jpg);
 }
 .mdl-list__item-avatar{
 	line-height: 40px;
@@ -266,13 +266,13 @@ html, body{
 	height: auto;
 	margin: 0;
 	padding: 20px;
-	background-color: rgba(255,255,255,.9);
+	background-color: rgba(245, 245, 248, 0.886);
 	position: absolute;
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
 	border-radius: 5px;
-	color: #3F51B5;
+	color: #0a0a0a;
 }
 /*=============Estilos barra superior*/
 .navBar{
