@@ -373,7 +373,7 @@ html, body{
 	width: 20%;
 	z-index: 80;
 	/*box-shadow: 0 0px 15px rgba(0,0,0,.4);*/
-	border-right: 1px solid #E1E1E1;
+	border-right: 1px solid #3F51B5;
 	transition: all .3s ease-in-out;
 }
 .navLateral-change{
@@ -382,7 +382,7 @@ html, body{
 	width: 0;
 }
 .navLateral-body{
-	background-color: #fff;
+	background-color: #ffffff;
 	z-index: 82;
 	left: 0;
 	padding-bottom: 30px;
@@ -436,7 +436,7 @@ html, body{
 	height: 70px;
 	line-height: 70px; 
 	font-size:20px; 
-	background-color: #F5F5F5;
+	background-color: #ffffff;
 	text-align: center;
 }
 .menu-principal li,
@@ -473,7 +473,7 @@ html, body{
 	height: 0;
 	overflow-y: hidden;
 	overflow-x: hidden;
-	background-color: #F5F5F5;
+	background-color: #ffffff;
 	transition: all .3s ease-in-out;
 }
 .sub-menu-options li a{ border-left: 3px solid transparent; }
@@ -489,7 +489,11 @@ html, body{
 	right: 0;
 	width: 80%;
 	z-index: 77;
-	background-color: #fff;
+	background-image: url(../assets/img/FondoMenu.jpg);
+	background-size: cover;
+	background-attachment: fixed;
+	background-repeat: no-repeat;
+	background-position: center center;
 	transition: all .3s ease-in-out;
 }
 .pageContent-change{
@@ -500,7 +504,8 @@ html, body{
 ======================================================*/
 /*=============Azulejos o accesos directos(Tiles)*/
 .tile{
-	border: 1px solid #E1E1E1;
+	border: 1px solid #ffffff;
+	background-color: #ffffff;
 	height: 140px;
 	width: 30%;
 	margin: 0 1%;
@@ -513,7 +518,7 @@ html, body{
 }
 .tile:hover .tile-text span{ color: #3F51B5; }
 .tile:hover .tile-icon{
-	color: rgba(0,191,238,.3);
+	color: rgba(0, 178, 223, 0.3);
 	transform: scale(1.5) translate(-10px, -10px);
 }
 .tile-text{
