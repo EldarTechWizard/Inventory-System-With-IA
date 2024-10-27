@@ -37,7 +37,7 @@ html, body{
 	font-size: 16px;
 	font-family: "RobotoRegular";
 	position: relative;
-	background-color: #fff;
+	background-color: #ffffff;
 }
 .text-condensedLight{ font-family: "RobotoCondensedLight"; }
 .text-center{ text-align: center; }
@@ -95,6 +95,8 @@ html, body{
 .panel-content{
 	display: block;
 	padding: 10px;
+	background-color: #ffffff;
+
 }
 /*====== encabezados de paginas*/
 .header-well,
@@ -110,7 +112,7 @@ html, body{
 .header-well-text{
 	position: absolute;
 	top: 0;
-	color: #333;
+	color: #454545;
 }
 .header-well-icon{
 	left: 0;
@@ -516,7 +518,7 @@ html, body{
 	margin-bottom: 20px;
 	display: inline-block;
 }
-.tile:hover .tile-text span{ color: #3F51B5; }
+.tile:hover .tile-text span{ color: #3345ad; }
 .tile:hover .tile-icon{
 	color: rgba(0, 178, 223, 0.3);
 	transform: scale(1.5) translate(-10px, -10px);
@@ -543,6 +545,7 @@ html, body{
 	display: block;
 	font-size: 27px;
 	z-index: 2;
+
 }
 .tile-icon{
 	bottom: 9px;
@@ -655,20 +658,24 @@ html, body{
 					Estilos products
 ======================================================*/
 .menu-categories ul li{
+	background-color: #ffffff;
 	display: inline-block;
 	margin: 5px 7px;
 }
 .menu-categories ul li a{
+	background-color: #ffffff;
 	text-decoration: none;
 	font-size: 19px;
 	font-family: "RobotoCondensedLight";
 }
 .product-card{
+	background-color: #ffffff;
 	display: inline-block;
 	margin: 5px;
 	width: 300px;
 	text-align: left;
 }
+
 .product-card .mdl-card__actions button,
 .product-card .mdl-card__actions a{
 	float: right;
