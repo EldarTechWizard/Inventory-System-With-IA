@@ -12,8 +12,6 @@ from .views import (
     OrderDetailUpdate,
     InventoryMovementListCreate,
     InventoryMovementUpdate,
-    OrderReportListCreate,
-    OrderReportUpdate,
     SupplierListCreate,
     SupplierUpdate,
 )
@@ -36,9 +34,6 @@ urlpatterns = [
 
     path('inventory-movements/', InventoryMovementListCreate.as_view(), name='inventory-movement-list-create'),
     path('inventory-movements/<int:pk>/', InventoryMovementUpdate.as_view(), name='inventory-movement-update'),
-
-    path('order-reports/', OrderReportListCreate.as_view(), name='order-report-list-create'),
-    path('order-reports/<int:pk>/', OrderReportUpdate.as_view(), name='order-report-update'),
 
     path('suppliers/', SupplierListCreate.as_view(), name='supplier-list-create'),
     path('suppliers/<int:pk>/', SupplierUpdate.as_view(), name='supplier-update'),

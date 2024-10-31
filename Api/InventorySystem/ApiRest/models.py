@@ -16,6 +16,8 @@ class Product(models.Model):
     barcode = models.CharField(max_length=100)
     category = models.ForeignKey(Category,on_delete=models.CASCADE)
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+    sell_price = models.DecimalField(max_digits=10, decimal_places=2)
+    minimum_stock_level = models.IntegerField(default=0)
     units_in_stock = models.IntegerField(default=0)
     registration_date = models.DateTimeField(auto_now_add=True)
     expiration_date = models.DateField(blank=True, null=True)
@@ -69,13 +71,6 @@ class InventoryMovement(models.Model):
     def __str__(self):
         return f"Movement #{self.movement_id}"
 
-class OrderReport(models.Model):
-    report_id = models.AutoField(primary_key=True)
-    report_date = models.DateTimeField(auto_now_add=True)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"Report for Order #{self.order.order_id}"
 
 class Supplier(models.Model):
     supplier_id = models.AutoField(primary_key=True)

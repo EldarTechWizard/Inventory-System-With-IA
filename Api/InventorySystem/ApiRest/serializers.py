@@ -7,7 +7,6 @@ from .models import (
     Order,
     Order_detail,
     InventoryMovement,
-    OrderReport,
     Supplier,
 )
 
@@ -46,11 +45,6 @@ class InventoryMovementSerializer(serializers.ModelSerializer):
         model = InventoryMovement
         fields = '__all__'
 
-
-class OrderReportSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = OrderReport
-        fields = '__all__'
 
 
 class SupplierSerializer(serializers.ModelSerializer):
