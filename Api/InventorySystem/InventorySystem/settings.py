@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'djoser'
 ]
 
+
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -147,3 +149,17 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# settings.py
+DJOSER = {
+    'SERIALIZERS': {
+        'user': 'ApiRest.serializers.CustomUserSerializer',
+        'current_user': 'ApiRest.serializers.CustomUserSerializer',
+        'user_create': 'ApiRest.serializers.CustomUserSerializer',
+    },
+}
+
+SIMPLE_JWT = {
+    'TOKEN_OBTAIN_SERIALIZER': 'ApiRest.serializers.CustomTokenObtainPairSerializer',
+}
+

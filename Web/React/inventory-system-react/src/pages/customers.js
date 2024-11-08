@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { logout, isLoggedIn } from "../utils/auth";
+import { isLoggedIn } from "../utils/auth";
 import { Navigate, useNavigate } from "react-router-dom";
+import { isAdmin, isSales } from "../utils/groups";
 
-function Main() {
+function Customers() {
   return (
     <div className="d-flex m-2 bg-white">
-      <h1>Hola</h1>
+      <h1>Customers</h1>
     </div>
   );
 }
 
-export default Main;
+export default Customers;

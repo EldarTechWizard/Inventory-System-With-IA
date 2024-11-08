@@ -9,3 +9,9 @@ export const isLoggedIn = () => {
 
   return decoded.exp > currentTime; // Check if token is expired
 };
+
+export const logout = () => {
+  localStorage.removeItem("access");
+  localStorage.removeItem("refresh");
+  localStorage.removeItem("group");
+};

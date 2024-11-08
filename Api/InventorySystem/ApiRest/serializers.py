@@ -10,6 +10,35 @@ from .models import (
     Supplier,
 )
 
+from djoser.serializers import UserSerializer as DjoserUserSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.contrib.auth.models import Group
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+
+    def get_token(cls, user):
+        # Llamar al método original para obtener el token
+        token = super().get_token(user)
+
+        # Agregar el nombre de los grupos del usuario al token
+        token['groups'] = [group.name for group in user.groups.all()]
+
+
+        print(token['groups']) #Esto si se imprime
+
+        return token
+
+class CustomUserSerializer(DjoserUserSerializer):
+    class Meta(DjoserUserSerializer.Meta):
+        fields = DjoserUserSerializer.Meta.fields + ('groups',)
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Agregar los nombres de los grupos del usuario a la respuesta
+        data['groups'] = [group.name for group in instance.groups.all()]
+        return data
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category

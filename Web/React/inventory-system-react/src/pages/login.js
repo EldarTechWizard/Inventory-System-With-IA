@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Form, Button, Container, Alert } from "react-bootstrap";
 import { isLoggedIn } from "../utils/auth";
+import axios from "axios";
 
 function Login() {
-  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,22 +20,20 @@ function Login() {
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/token/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username: username, password: password }),
-      });
+      const response = await axios.post(
+        "http://127.0.0.1:8000/auth/jwt/create/",
+        {
+          username: username,
+          password: password,
+        }
+      );
 
-      if (!response.ok) {
-        throw new Error("Crendenciales incorrectas");
-      }
+      const { access, refresh } = response.data;
 
-      const data = await response.json();
+      localStorage.setItem("access", access);
+      localStorage.setItem("refresh", refresh);
 
-      localStorage.setItem("access", data.access);
-      localStorage.setItem("refresh", data.refresh);
+      navigate("/");
     } catch (err) {
       setError(err.message);
     }

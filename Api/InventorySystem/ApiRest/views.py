@@ -22,8 +22,13 @@ from .serializers import (
     OrderDetailSerializer,
     InventoryMovementSerializer,
     SupplierSerializer,
+    CustomTokenObtainPairSerializer
 )
 
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
 # Product Views
 class ProductListCreate(generics.ListCreateAPIView):
