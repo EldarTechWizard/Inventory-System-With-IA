@@ -15,19 +15,19 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth.models import Group
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
+    def validate(self, attrs):
+        # Validación y generación del token
+        data = super().validate(attrs)
 
-    def get_token(cls, user):
-        # Llamar al método original para obtener el token
-        token = super().get_token(user)
+        # Obtener el token y el usuario
+        refresh = self.get_token(self.user)
 
-        # Agregar el nombre de los grupos del usuario al token
-        token['groups'] = [group.name for group in user.groups.all()]
+        # Agregar información adicional al token
+        data['refresh'] = str(refresh)
+        data['access'] = str(refresh.access_token)
+        data['groups'] = [group.name for group in self.user.groups.all()]
 
-
-        print(token['groups']) #Esto si se imprime
-
-        return token
+        return data
 
 class CustomUserSerializer(DjoserUserSerializer):
     class Meta(DjoserUserSerializer.Meta):

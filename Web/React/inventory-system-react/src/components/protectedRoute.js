@@ -1,8 +1,24 @@
-import { Navigate } from "react-router-dom";
-import { isLoggedIn } from "../utils/auth";
+import { Navigate, Route } from "react-router-dom";
+import AuthContext from "../context/authContext";
+import { useContext } from "react";
+import MainComponent from "./mainComponent";
 
-const ProtectedRoute = ({ children }) => {
-  return isLoggedIn() ? children : <Navigate to="/login" />;
+const ProtectedComponent = ({ component: Component, roles }) => {
+  let { user, group } = useContext(AuthContext);
+
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  if (roles && !roles.some((role) => group.includes(role))) {
+    return <Navigate to="/" />;
+  }
+
+  return (
+    <MainComponent>
+      <Component />
+    </MainComponent>
+  );
 };
 
-export default ProtectedRoute;
+export default ProtectedComponent;
