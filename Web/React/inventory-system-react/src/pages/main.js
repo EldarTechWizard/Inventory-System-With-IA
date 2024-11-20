@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import { logout, isLoggedIn } from "../utils/auth";
-import { Navigate, useNavigate } from "react-router-dom";
 
 function Main() {
   return (

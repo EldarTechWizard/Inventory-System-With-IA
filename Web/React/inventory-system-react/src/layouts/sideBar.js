@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext } from "react";
 import "./sideBar.css";
-import { useNavigate } from "react-router-dom";
-import { logout } from "../utils/auth";
+import AuthContext from "../context/authContext";
 import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import axios from "axios";
-import { isAdmin, isSales, isWarehouse } from "../utils/groups";
 
 const groups = [
   {
@@ -49,44 +46,17 @@ function ListWithTittle({ tittle }) {
 }
 
 function Sidebar() {
-  const navigate = useNavigate();
-  const [group, setGroup] = useState("");
-
-  const handleOnClick = () => {
-    logout();
-    navigate("/login");
-  };
-
-  const handleOnLoad = async () => {
-    try {
-      const token = `Bearer ${localStorage.getItem("access")}`;
-
-      const response = await axios.get("http://127.0.0.1:8000/auth/users/me/", {
-        headers: {
-          Authorization: token,
-        },
-      });
-
-      const { groups } = response.data;
-
-      setGroup(groups[0]);
-      localStorage.setItem("group", groups[0]);
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
-
-  useEffect(() => {
-    handleOnLoad();
-  }, []);
+  let { logoutUser, group } = useContext(AuthContext);
 
   return (
     <div className="h-100 border-end px-3 bg-white">
       <h2 className="p-3">My Sidebar</h2>
 
-      {isAdmin() ? <ListWithTittle tittle="Admin" /> : null}
-      {isAdmin() || isSales() ? <ListWithTittle tittle="Sales" /> : null}
-      {isAdmin() || isWarehouse() ? (
+      {group.includes("Admin") ? <ListWithTittle tittle="Admin" /> : null}
+      {group.includes("Admin") || group.includes("Sales") ? (
+        <ListWithTittle tittle="Sales" />
+      ) : null}
+      {group.includes("Admin") || group.includes("Warehouse") ? (
         <ListWithTittle tittle="Warehouse" />
       ) : null}
 
@@ -94,7 +64,7 @@ function Sidebar() {
         variant="primary"
         type="submit"
         className="w-100 mt-4"
-        onClick={handleOnClick}
+        onClick={logoutUser}
       >
         Logout
       </Button>

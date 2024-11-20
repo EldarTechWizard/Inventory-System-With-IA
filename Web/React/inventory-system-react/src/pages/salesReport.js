@@ -1,7 +1,4 @@
 import React, { useState } from "react";
-import { isLoggedIn } from "../utils/auth";
-import { Navigate, useNavigate } from "react-router-dom";
-import { isAdmin } from "../utils/groups";
 
 function SalesReport() {
   return (
