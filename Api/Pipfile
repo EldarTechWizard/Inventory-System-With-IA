@@ -10,6 +10,7 @@ djoser = "*"
 python-dotenv = "*"
 mysqlclient = "*"
 django-restframework = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 
