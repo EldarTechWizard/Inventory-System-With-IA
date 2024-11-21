@@ -34,13 +34,13 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 class ProductListCreate(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [ManagerPermissions,WarehouseManagerPermissions]
+    permission_classes = [WarehouseManagerPermissions]
 
 
 class ProductUpdate(generics.RetrieveUpdateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [ManagerPermissions,WarehouseManagerPermissions]
+    permission_classes = [WarehouseManagerPermissions]
 
 
 

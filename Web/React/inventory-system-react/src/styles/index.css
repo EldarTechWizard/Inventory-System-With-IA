@@ -1,4 +1,16 @@
+html {
+  height: 100%;
+}
+
 body {
   font-family: "Inter", sans-serif; /* Replace with your desired font */
-  height: 100%;
+  height: inherit;
+}
+
+#root {
+  height: inherit;
+}
+
+.App {
+  height: inherit;
 }

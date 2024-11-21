@@ -22,7 +22,11 @@ const groups = [
   },
   {
     groupName: "Warehouse",
-    fields: [{ Productos: "Productos" }, { Proveedores: "Proveedores" }],
+    fields: [
+      { Productos: "Productos" },
+      { Proveedores: "Proveedores" },
+      { "Movimientos de inventario": "Movimientos-Inventario" },
+    ],
   },
 ];
 
@@ -49,7 +53,7 @@ function Sidebar() {
   let { logoutUser, group } = useContext(AuthContext);
 
   return (
-    <div className="h-100 border-end px-3 bg-white">
+    <div className="sidebar border-end px-3 bg-white">
       <h2 className="p-3">My Sidebar</h2>
 
       {group.includes("Admin") ? <ListWithTittle tittle="Admin" /> : null}

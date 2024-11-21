@@ -12,6 +12,7 @@ import Products from "./pages/products";
 import Suppliers from "./pages/suppliers";
 import { AuthProvider } from "./context/authContext";
 import ProtectedComponent from "./components/protectedRoute";
+import InventoryMovement from "./pages/inventoryMovement";
 
 function App() {
   return (
@@ -85,6 +86,16 @@ function App() {
             element={
               <ProtectedComponent
                 component={Suppliers}
+                roles={["Admin", "Warehouse"]}
+              />
+            }
+          />
+
+          <Route
+            path="/Movimientos-Inventario"
+            element={
+              <ProtectedComponent
+                component={InventoryMovement}
                 roles={["Admin", "Warehouse"]}
               />
             }
