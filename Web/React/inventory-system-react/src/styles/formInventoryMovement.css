@@ -1,0 +1,11 @@
+.textFieldsContainers {
+  width: 40%;
+}
+
+.textFieldsContainers > * {
+  padding-top: 1rem;
+}
+
+.ContainerDatePicker > * {
+  padding-top: 1rem;
+}

@@ -1,85 +1,155 @@
-import axios from "axios";
 import React, { useState, useEffect, useContext } from "react";
-import { Table, Button, Modal } from "react-bootstrap";
-import AuthContext from "../context/authContext";
+import { Button, Modal } from "react-bootstrap";
 import "../styles/products.css";
 import ModalFormProduct from "../components/formProduct";
+import { fetchData } from "../hooks/apiManager";
 
-function Rows({ product }) {
-  return (
-    <tr>
-      <th>{product.product_id}</th>
-      <th>{product.product_name}</th>
-      <th>{product.barcode}</th>
-      <th>{product.unit_price}</th>
-      <th>{product.units_in_stock}</th>
-    </tr>
-  );
-}
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TablePagination from "@mui/material/TablePagination";
+import TableRow from "@mui/material/TableRow";
+import ModalFormSupplier from "../components/formSuppliers";
+
+const columns = [
+  { id: "product_id", label: "Id", minWidth: 100 },
+  { id: "product_name", label: "Nombre", minWidth: 170 },
+  {
+    id: "barcode",
+    label: "Codigo de barras",
+    minWidth: 170,
+  },
+  {
+    id: "unit_price",
+    label: "Precio de compra",
+    minWidth: 170,
+  },
+  {
+    id: "sell_price",
+    label: "Precio de venta",
+    minWidth: 170,
+  },
+  {
+    id: "minimum_stock_level",
+    label: "Stock Minimo",
+    minWidth: 170,
+  },
+  {
+    id: "units_in_stock",
+    label: "Unidades en stock",
+    minWidth: 170,
+  },
+  {
+    id: "registration_date",
+    label: "Fecha de registro",
+    minWidth: 170,
+  },
+  {
+    id: "expiration_date",
+    label: "Fecha de expiracion",
+    minWidth: 170,
+  },
+  {
+    id: "category",
+    label: "Categoria",
+    minWidth: 170,
+  },
+  {
+    id: "supplier",
+    label: "Proveedor",
+    minWidth: 170,
+  },
+];
 
 function Products() {
-  let { authTokens } = useContext(AuthContext);
-
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    const url = "http://127.0.0.1:8000/api/products";
-    const token = `Bearer ${authTokens.access}`;
+    const getData = async () => {
+      setProducts(await fetchData("/products"));
+    };
 
-    async function fetchData() {
-      try {
-        // Perform GET request with Bearer token in headers
-        const response = await axios.get(url, {
-          headers: {
-            Authorization: `${token}`,
-          },
-        });
+    getData();
+  }, []);
 
-        setProducts(response.data);
-      } catch (error) {
-        // Handle errors
-        if (error.response) {
-          // Server responded with a status other than 2xx
-          console.error("Error response:", error.response.data);
-          console.error("Status code:", error.response.status);
-        } else if (error.request) {
-          // Request was made but no response received
-          console.error("No response received:", error.request);
-        } else {
-          // Something happened setting up the request
-          console.error("Error setting up request:", error.message);
-        }
-      }
-    }
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-    fetchData();
-  }, [authTokens]);
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(event.target.value);
+    setPage(0);
+  };
 
   return (
     <div id="products" className="d-flex m-2 bg-white border p-2 flex-column">
-      <div className="d-flex border border-primary w-100 p-2">
-        <ModalFormProduct />
+      <div className="d-flex  p-2 justify-content-between">
+        <input type="text" placeholder="Search.." className="w-50" />
+        <ModalFormSupplier />
       </div>
 
-      <div className="border border-secondary w-100 p-2">
-        <Table>
-          <thead>
-            <tr>
-              <th>Id</th>
-              <th>Nombre</th>
-              <th>Codigo de barra</th>
-              <th>Precio</th>
-              <th>Cantidad</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((p) => (
-              <Rows product={p} />
-            ))}
-          </tbody>
-        </Table>
-      </div>
-      <div></div>
+      <Paper
+        sx={{ width: "100%", overflow: "auto" }}
+        className="no-p-margin mt-3 "
+      >
+        <TableContainer sx={{ maxHeight: 440 }}>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
+              <TableRow>
+                {columns.map((column) => (
+                  <TableCell
+                    key={column.id}
+                    align={column.align}
+                    className="fw-bold"
+                  >
+                    {column.label}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {products
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row) => {
+                  return (
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={row.code}
+                    >
+                      {columns.map((column) => {
+                        const value = row[column.id];
+                        return (
+                          <TableCell key={column.id} align={column.align}>
+                            {column.format && typeof value === "number"
+                              ? column.format(value)
+                              : value}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  );
+                })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[10]}
+          component="div"
+          count={products.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Paper>
     </div>
   );
 }

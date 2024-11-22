@@ -37,5 +37,6 @@ urlpatterns = [
 
     path('suppliers/', SupplierListCreate.as_view(), name='supplier-list-create'),
     path('suppliers/<int:pk>/', SupplierUpdate.as_view(), name='supplier-update'),
+
 ]
 

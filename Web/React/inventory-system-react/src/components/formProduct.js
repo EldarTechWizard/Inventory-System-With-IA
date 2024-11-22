@@ -66,10 +66,9 @@ function ModalFormProduct() {
       supplier: Number(supplier_id),
     };
 
-    console.log(data);
     try {
       const result = await postData("/products/", data);
-      console.log("Data added:", result);
+      handleClose();
     } catch (err) {
       console.error("Error:", err.message);
     }
