@@ -60,7 +60,8 @@ class CustomerSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = '__all__'
+        fields = ['order_id','customers','order_date','total_amount']
+        read_only_fields = ['order_id', 'order_date']
 
 
 class OrderDetailSerializer(serializers.ModelSerializer):
@@ -68,6 +69,8 @@ class OrderDetailSerializer(serializers.ModelSerializer):
         model = Order_detail
         fields = '__all__'
 
+class OrderListSerializer(serializers.ListSerializer):
+    child = OrderDetailSerializer()
 
 class InventoryMovementSerializer(serializers.ModelSerializer):
     class Meta:

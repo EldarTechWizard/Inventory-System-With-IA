@@ -6,7 +6,7 @@ function MainComponent({ children }) {
   return (
     <div className="d-flex h-100 w-100">
       <Sidebar />
-      <div className="w-100 h-100 relative">
+      <div className="h-100 relative dashboard">
         <Header />
         {children}
       </div>
