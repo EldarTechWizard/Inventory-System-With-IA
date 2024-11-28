@@ -23,3 +23,16 @@ body {
 .dashboard {
   width: 80%;
 }
+
+a {
+  text-decoration: none; /* Removes underline */
+  color: inherit;
+}
+
+li {
+  list-style: none; /* Removes bullet or number from list item */
+}
+
+ul {
+  padding: 0;
+}

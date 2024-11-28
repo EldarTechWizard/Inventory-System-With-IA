@@ -7,7 +7,7 @@ import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 import { fetchData, postData } from "../hooks/apiManager";
 import "../styles/formInventoryMovement.css";
 
-function ModalFormInventoryMovement() {
+function ModalFormInventoryMovement({ getData }) {
   const [movementType, setMovementType] = useState("");
   const [product, setProduct] = useState("");
   const [quantity, setQuantity] = useState("");
@@ -33,15 +33,13 @@ function ModalFormInventoryMovement() {
       product: Number(product),
       quantity: Number(quantity),
       movement_type: movementType,
-      movement_date: movementDate.format("YYYY-MM-DD"),
       remarks: remarks,
     };
 
     console.log(data);
-
     try {
       const result = await postData("/inventory-movements/", data);
-
+      await getData();
       handleClose();
     } catch (err) {
       console.error("Error:", err.message);

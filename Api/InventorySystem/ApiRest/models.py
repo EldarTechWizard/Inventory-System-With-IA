@@ -17,6 +17,7 @@ class Supplier(models.Model):
     email = models.EmailField(blank=True, null=True)
     address = models.CharField(max_length=255, blank=True, null=True)
     registration_date = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.supplier_name
@@ -33,6 +34,7 @@ class Product(models.Model):
     units_in_stock = models.IntegerField(default=0)
     registration_date = models.DateTimeField(auto_now_add=True)
     expiration_date = models.DateField(blank=True, null=True)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.product_name
@@ -43,6 +45,7 @@ class Customer(models.Model):
     email = models.EmailField(max_length=255)
     phone = models.CharField(max_length=15,blank=True,null=True)
     address = models.CharField(max_length=255, blank=True,null=True)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
@@ -53,6 +56,7 @@ class Order(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     order_date = models.DateTimeField(auto_now_add=True)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"Order #{self.order_id}"
@@ -79,6 +83,8 @@ class InventoryMovement(models.Model):
     quantity = models.IntegerField()
     movement_date = models.DateTimeField(auto_now_add=True)
     remarks = models.CharField(max_length=255, blank=True, null=True)
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"Movement #{self.movement_id}"

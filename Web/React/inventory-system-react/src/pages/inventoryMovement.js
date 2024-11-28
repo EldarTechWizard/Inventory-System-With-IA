@@ -12,7 +12,7 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 
 const columns = [
-  { id: "movement_id", label: "Mov_ID", minWidth: 170 },
+  { id: "movement_id", label: "Id", minWidth: 170 },
   { id: "movement_type", label: "Tipo de movimiento", minWidth: 100 },
   {
     id: "quantity",
@@ -30,20 +30,19 @@ const columns = [
     minWidth: 170,
   },
   {
-    id: "product",
-    label: "Producto_ID",
+    id: "product_name",
+    label: "Producto",
     minWidth: 170,
   },
 ];
 
 function InventoryMovement() {
   const [inventoryMovements, setInventoryMovements] = useState([]);
+  const getData = async () => {
+    setInventoryMovements(await fetchData("/inventory-movements"));
+  };
 
   useEffect(() => {
-    const getData = async () => {
-      setInventoryMovements(await fetchData("/inventory-movements"));
-    };
-
     getData();
   }, []);
 
@@ -66,7 +65,7 @@ function InventoryMovement() {
     >
       <div className="d-flex w-100 p-2 justify-content-between">
         <input type="text" placeholder="Search.." className="w-50" />
-        <ModalFormInventoryMovement />
+        <ModalFormInventoryMovement getData={getData} />
       </div>
 
       <Paper sx={{ width: "100%" }} className="no-p-margin mt-3">

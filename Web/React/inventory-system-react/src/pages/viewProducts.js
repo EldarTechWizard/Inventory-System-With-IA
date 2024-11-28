@@ -25,23 +25,8 @@ const columns = [
     minWidth: 170,
   },
   {
-    id: "sell_price",
-    label: "Precio de venta",
-    minWidth: 170,
-  },
-  {
-    id: "minimum_stock_level",
-    label: "Stock Minimo",
-    minWidth: 170,
-  },
-  {
     id: "units_in_stock",
     label: "Unidades en stock",
-    minWidth: 170,
-  },
-  {
-    id: "registration_date",
-    label: "Fecha de registro",
     minWidth: 170,
   },
   {
@@ -50,12 +35,12 @@ const columns = [
     minWidth: 170,
   },
   {
-    id: "category",
+    id: "category_name",
     label: "Categoria",
     minWidth: 170,
   },
   {
-    id: "supplier",
+    id: "supplier_name",
     label: "Proveedor",
     minWidth: 170,
   },

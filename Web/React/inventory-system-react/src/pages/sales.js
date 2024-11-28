@@ -78,6 +78,7 @@ function Sales() {
 
   const handleConfirm = async () => {
     const order = { customers: 1, total_amount: String(total.toFixed(2)) };
+    console.log(order);
     const result = await postData("/orders/", order);
 
     if (result) {

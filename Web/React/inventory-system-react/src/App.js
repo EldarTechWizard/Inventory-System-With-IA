@@ -13,6 +13,7 @@ import Suppliers from "./pages/suppliers";
 import { AuthProvider } from "./context/authContext";
 import ProtectedComponent from "./components/protectedRoute";
 import InventoryMovement from "./pages/inventoryMovement";
+import MostSalesReport from "./pages/mostSalesResport";
 
 function App() {
   return (
@@ -42,6 +43,24 @@ function App() {
             path="/Reporte-Ventas"
             element={
               <ProtectedComponent component={SalesReport} roles={["Admin"]} />
+            }
+          />
+          <Route
+            path="/Reporte-Inventario"
+            element={
+              <ProtectedComponent
+                component={InventoryReport}
+                roles={["Admin"]}
+              />
+            }
+          />
+          <Route
+            path="/Reporte-Mas-Vendidos"
+            element={
+              <ProtectedComponent
+                component={MostSalesReport}
+                roles={["Admin"]}
+              />
             }
           />
           <Route

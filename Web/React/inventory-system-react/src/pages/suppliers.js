@@ -44,11 +44,11 @@ const columns = [
 function Suppliers() {
   const [suppliers, setSuppliers] = useState([]);
 
-  useEffect(() => {
-    const getData = async () => {
-      setSuppliers(await fetchData("/suppliers"));
-    };
+  const getData = async () => {
+    setSuppliers(await fetchData("/suppliers"));
+  };
 
+  useEffect(() => {
     getData();
   }, []);
 
@@ -68,7 +68,7 @@ function Suppliers() {
     <div id="suppliers" className="d-flex m-2 bg-white border p-2 flex-column">
       <div className="d-flex w-100 p-2 justify-content-between">
         <input type="text" placeholder="Search.." className="w-50" />
-        <ModalFormSupplier />
+        <ModalFormSupplier getData={getData} />
       </div>
 
       <Paper sx={{ width: "100%" }} className="no-p-margin mt-3">

@@ -7,7 +7,7 @@ import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 import { fetchData, postData } from "../hooks/apiManager";
 import "../styles/formInventoryMovement.css";
 
-function ModalFormSupplier() {
+function ModalFormSupplier({ getData }) {
   const [supplierName, setSupplierName] = useState("");
   const [contactPerson, setContactPerson] = useState("");
   const [phone, setPhone] = useState("");
@@ -29,11 +29,9 @@ function ModalFormSupplier() {
       registration_date: registrationDate.format("YYYY-MM-DD"),
     };
 
-    console.log(data);
-
     try {
       const result = await postData("/suppliers/", data);
-
+      await getData();
       handleClose();
     } catch (err) {
       console.error("Error:", err.message);

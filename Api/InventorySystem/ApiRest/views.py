@@ -1,11 +1,17 @@
 from rest_framework.views import APIView
 from django.contrib.auth.models import User, Group
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics,status
 from rest_framework.permissions import IsAuthenticated
+from django.utils import timezone
+from datetime import timedelta
 from .permissions import ManagerPermissions,EmployeePermissions,WarehouseManagerPermissions
 from django.shortcuts import get_object_or_404
+from .filters import (InventoryMovementFilter,OrderFilter)
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
+from django.db.models import Sum, F, Value
+from django.utils.dateparse import parse_date
 from .models import (
     Category,
     Product,
@@ -24,7 +30,9 @@ from .serializers import (
     OrderListSerializer,
     InventoryMovementSerializer,
     SupplierSerializer,
-    CustomTokenObtainPairSerializer
+    CustomTokenObtainPairSerializer,
+    TopSellingProductSerializer,
+    LeastSellingProductSerializer
 )
 
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -58,12 +66,48 @@ class ProductListByCategoryView(APIView):
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
 
+class ProductBelowMinimumStockView(generics.ListAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
 
+    def get_queryset(self):
+        # Filtrar productos cuyo nivel de stock esté por debajo del mínimo
+        return Product.objects.filter(units_in_stock__lt=F('minimum_stock_level'), is_active=True)
+
+
+class ProductApproachingExpirationView(generics.ListAPIView):
+    serializer_class = ProductSerializer
+
+    def get_queryset(self):
+
+        today = timezone.now().date()
+
+
+        expiration_threshold = today + timedelta(days=7)
+
+        return Product.objects.filter(
+            expiration_date__lte=expiration_threshold,
+            expiration_date__gte=today,
+            is_active=True
+        )
+
+class ExpiredProductsView(generics.ListAPIView):
+    serializer_class = ProductSerializer
+
+    def get_queryset(self):
+        # Fecha actual
+        today = timezone.now().date()
+
+        # Filtrar productos cuya fecha de caducidad ya pasó
+        return Product.objects.filter(
+            expiration_date__lt=today,  # Caducaron antes de hoy
+            is_active=True             # Productos activos
+        )
 # Category Views
 class CategoryListCreate(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [WarehouseManagerPermissions]
+    permission_classes = [IsAuthenticated]
 
 class CategoryUpdate(generics.RetrieveUpdateAPIView):
     queryset = Category.objects.all()
@@ -88,6 +132,8 @@ class OrderListCreate(generics.ListCreateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = [EmployeePermissions]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = OrderFilter
 
     def perform_create(self, serializer):
         # Asocia automáticamente el usuario autenticado con la orden
@@ -106,6 +152,86 @@ class OrderDetailListCreate(generics.ListAPIView):
     permission_classes = [EmployeePermissions]
 
 
+class LessSellingProductsListView(generics.ListAPIView):
+    serializer_class = TopSellingProductSerializer
+
+    def get_queryset(self):
+        # Obtener los parámetros de filtro de fecha desde la solicitud
+        start_date = self.request.query_params.get('start_date')
+        end_date = self.request.query_params.get('end_date')
+
+        # Filtrar los detalles de pedidos en el rango de fechas proporcionado
+        order_details = Order_detail.objects.all()
+
+        if start_date:
+            order_details = order_details.filter(order__order_date__gte=parse_date(start_date))
+        if end_date:
+            order_details = order_details.filter(order__order_date__lte=parse_date(end_date))
+
+        # Obtener los productos más vendidos
+        most_sold = order_details.values('product')\
+            .annotate(total_quantity_sold=Sum('quantity'))\
+            .order_by('total_quantity_sold')[:3]
+
+        most_sold_data = []
+
+        for entry in most_sold:
+            product = Product.objects.get(product_id=entry['product'])
+            total_sold = entry['total_quantity_sold']
+            total = total_sold * product.unit_price if product.unit_price else 0
+
+            most_sold_data.append({
+                'product_id': product.product_id,
+                'product_name': product.product_name,
+                'category': product.category.category_name if product.category else 'N/A',
+                'quantity': total_sold,
+                'total': total
+            })
+
+        return most_sold_data
+
+
+
+
+class TopSellingProductsListView(generics.ListAPIView):
+    serializer_class = TopSellingProductSerializer
+
+    def get_queryset(self):
+        # Obtener los parámetros de filtro de fecha desde la solicitud
+        start_date = self.request.query_params.get('start_date')
+        end_date = self.request.query_params.get('end_date')
+
+        # Filtrar los detalles de pedidos en el rango de fechas proporcionado
+        order_details = Order_detail.objects.all()
+
+        if start_date:
+            order_details = order_details.filter(order__order_date__gte=parse_date(start_date))
+        if end_date:
+            order_details = order_details.filter(order__order_date__lte=parse_date(end_date))
+
+        # Obtener los productos más vendidos
+        most_sold = order_details.values('product')\
+            .annotate(total_quantity_sold=Sum('quantity'))\
+            .order_by('-total_quantity_sold')[:3]
+
+        most_sold_data = []
+
+        for entry in most_sold:
+            product = Product.objects.get(product_id=entry['product'])
+            total_sold = entry['total_quantity_sold']
+            total = total_sold * product.unit_price if product.unit_price else 0
+
+            most_sold_data.append({
+                'product_id': product.product_id,
+                'product_name': product.product_name,
+                'category': product.category.category_name if product.category else 'N/A',
+                'quantity': total_sold,
+                'total': total
+            })
+
+        return most_sold_data
+
+
 class OrderDetailPostList(generics.CreateAPIView):
     queryset = Order_detail.objects.all()
     serializer_class = OrderListSerializer
@@ -121,6 +247,10 @@ class InventoryMovementListCreate(generics.ListCreateAPIView):
     queryset = InventoryMovement.objects.all()
     serializer_class = InventoryMovementSerializer
     permission_classes = [WarehouseManagerPermissions]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = InventoryMovementFilter
+
+
 
 class InventoryMovementUpdate(generics.RetrieveUpdateAPIView):
     queryset = InventoryMovement.objects.all()

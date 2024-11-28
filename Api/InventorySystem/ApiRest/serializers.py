@@ -46,9 +46,12 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source="category.category_name",read_only=True)
+    supplier_name = serializers.CharField(source="supplier.supplier_name",read_only=True)
     class Meta:
         model = Product
         fields = '__all__'
+        read_only_field = ["order_date",]
 
 
 class CustomerSerializer(serializers.ModelSerializer):
@@ -58,13 +61,18 @@ class CustomerSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
+    document = serializers.CharField(default="Ticket",read_only =True)
+    username = serializers.CharField(source='user.username',read_only =True)
+    customer_name = serializers.CharField(source='customers.name',read_only =True)
+
     class Meta:
         model = Order
-        fields = ['order_id','customers','order_date','total_amount']
-        read_only_fields = ['order_id', 'order_date']
+        fields = ['order_id','customers','order_date','total_amount','is_active','document','user','customer_name','username']
+        read_only_fields = ['order_id', 'order_date', 'user']
 
 
 class OrderDetailSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Order_detail
         fields = '__all__'
@@ -73,13 +81,39 @@ class OrderListSerializer(serializers.ListSerializer):
     child = OrderDetailSerializer()
 
 class InventoryMovementSerializer(serializers.ModelSerializer):
+    user = serializers.CharField(source='user.username', read_only=True)
+    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+    product_name = serializers.SerializerMethodField()
+
     class Meta:
         model = InventoryMovement
-        fields = '__all__'
+        fields = ['movement_id','movement_type','quantity','movement_date','remarks','user','product','product_name']
+        read_only_fields = ['user','movement_date','movement_id']
 
-
+    def get_product_name(self, obj):
+        return obj.product.product_name
+    def create(self, validated_data):
+        # Assign the user from the request context
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
 
 class SupplierSerializer(serializers.ModelSerializer):
     class Meta:
         model = Supplier
         fields = '__all__'
+
+
+class TopSellingProductSerializer(serializers.Serializer):
+    product_id = serializers.IntegerField()
+    product_name = serializers.CharField()
+    category = serializers.CharField()
+    quantity = serializers.IntegerField()
+    total = serializers.DecimalField(max_digits=10, decimal_places=2)
+
+
+class LeastSellingProductSerializer(serializers.Serializer):
+    product_id = serializers.IntegerField()
+    product_name = serializers.CharField()
+    category = serializers.CharField()
+    quantity = serializers.IntegerField()
+    total = serializers.DecimalField(max_digits=10, decimal_places=2)

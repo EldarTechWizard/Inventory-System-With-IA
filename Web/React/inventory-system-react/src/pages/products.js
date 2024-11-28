@@ -53,12 +53,12 @@ const columns = [
     minWidth: 170,
   },
   {
-    id: "category",
+    id: "category_name",
     label: "Categoria",
     minWidth: 170,
   },
   {
-    id: "supplier",
+    id: "supplier_name",
     label: "Proveedor",
     minWidth: 170,
   },
@@ -66,12 +66,10 @@ const columns = [
 
 function Products() {
   const [products, setProducts] = useState([]);
-
+  const getData = async () => {
+    setProducts(await fetchData("/products"));
+  };
   useEffect(() => {
-    const getData = async () => {
-      setProducts(await fetchData("/products"));
-    };
-
     getData();
   }, []);
 
@@ -91,7 +89,7 @@ function Products() {
     <div id="products" className="d-flex m-2 bg-white border p-2 flex-column">
       <div className="d-flex  p-2 justify-content-between">
         <input type="text" placeholder="Search.." className="w-50" />
-        <ModalFormSupplier />
+        <ModalFormProduct getData={getData} />
       </div>
 
       <Paper

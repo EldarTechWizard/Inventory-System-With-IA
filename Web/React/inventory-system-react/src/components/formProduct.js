@@ -8,7 +8,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import "../styles/formProduct.css";
 import { fetchData, postData } from "../hooks/apiManager";
 
-function ModalFormProduct() {
+function ModalFormProduct({ getData }) {
   const [show, setShow] = useState(false);
   const [categories, setCategories] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
@@ -60,7 +60,6 @@ function ModalFormProduct() {
       sell_price: sellPrice,
       minimum_stock_level: Number(minimum_stock_level),
       units_in_stock: Number(unitsInStock),
-      registration_date: registrationDate.format("YYYY-MM-DD"),
       expiration_date: expirationDate.format("YYYY-MM-DD"),
       category: Number(categoryId),
       supplier: Number(supplier_id),
@@ -68,6 +67,7 @@ function ModalFormProduct() {
 
     try {
       const result = await postData("/products/", data);
+      getData();
       handleClose();
     } catch (err) {
       console.error("Error:", err.message);
@@ -143,7 +143,7 @@ function ModalFormProduct() {
                 </Form.Group>
 
                 <Form.Group controlId="formMinimumStockLevel">
-                  <Form.Label>Unidades en Stock</Form.Label>
+                  <Form.Label>Minimo nivel en Stock</Form.Label>
                   <Form.Control
                     type="number"
                     placeholder="Ingrese el número de unidades"
@@ -182,19 +182,6 @@ function ModalFormProduct() {
               </div>
 
               <div className="d-flex flex-column groups">
-                <Form.Group controlId="formRegistrationDate">
-                  <Form.Label>Fecha de Registro</Form.Label>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      label="Controlled picker"
-                      value={registrationDate}
-                      onChange={(newValue) => setRegistrationDate(newValue)}
-                      className="pt-2"
-                      readOnly
-                    />
-                  </LocalizationProvider>
-                </Form.Group>
-
                 <Form.Group controlId="formExpirationDate">
                   <Form.Label>Fecha de Caducidad</Form.Label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>

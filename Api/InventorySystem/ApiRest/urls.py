@@ -15,7 +15,12 @@ from .views import (
     SupplierListCreate,
     SupplierUpdate,
     ProductListByCategoryView,
-    OrderDetailPostList
+    OrderDetailPostList,
+    TopSellingProductsListView,
+    LessSellingProductsListView,
+    ProductBelowMinimumStockView,
+    ProductApproachingExpirationView,
+    ExpiredProductsView
 )
 
 urlpatterns = [
@@ -41,7 +46,13 @@ urlpatterns = [
     path('suppliers/', SupplierListCreate.as_view(), name='supplier-list-create'),
     path('suppliers/<int:pk>/', SupplierUpdate.as_view(), name='supplier-update'),
 
-    path('products/category/<int:category_id>/', ProductListByCategoryView.as_view(), name='product-list-by-category')
+    path('products/category/<int:category_id>/', ProductListByCategoryView.as_view(), name='product-list-by-category'),
 
+    path('order-details/top-selling/', TopSellingProductsListView.as_view(), name='order-details-top-selling'),
+    path('order-details/less-selling/', LessSellingProductsListView.as_view(), name='order-details-less-selling'),
+
+    path('products/need-stock/', ProductBelowMinimumStockView.as_view(), name='products-need-stock'),
+     path('products/approaching-expiration/', ProductApproachingExpirationView.as_view(), name='products_approaching_expiration'),
+      path('products/expired/', ExpiredProductsView.as_view(), name='expired_products'),
 ]
 

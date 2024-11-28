@@ -13,8 +13,9 @@ import {
   ModalBody,
 } from "react-bootstrap";
 import "../styles/report.css";
-import ModalInventoryReport from "../components/modalInventoryReport";
-function InventoryReport() {
+import ModalMostSalesReport from "../components/modalMostSalesReport";
+
+function MostSalesReport() {
   const [dateLimitLeft, setDateLimitLeft] = useState(dayjs(new Date()));
   const [dateLimitRight, setDateLimitRight] = useState(dayjs(new Date()));
   const [show, setShow] = useState(false);
@@ -34,7 +35,7 @@ function InventoryReport() {
           <Modal.Title>Reporte generado</Modal.Title>
         </Modal.Header>
         <ModalBody>
-          <ModalInventoryReport
+          <ModalMostSalesReport
             startDate={dateLimitLeft.format("YYYY-MM-DD")}
             endDate={dateLimitRight.format("YYYY-MM-DD")}
           />
@@ -46,7 +47,7 @@ function InventoryReport() {
         </Modal.Footer>
       </Modal>
       <div className="px-5 w-100">
-        <h2 className="text-center ">Reporte de inventarios</h2>
+        <h2 className="text-center ">Reporte de articulos mas vendidos</h2>
         <h6 className="fs-sm w-100 border-bottom border-secondary mt-3 py-3 text-center text-body-secondary">
           Seleccione el periodo deseado
         </h6>
@@ -88,4 +89,4 @@ function InventoryReport() {
   );
 }
 
-export default InventoryReport;
+export default MostSalesReport;
