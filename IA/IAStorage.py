@@ -18,7 +18,7 @@ def show_message(title, message):
 username = "Admin"
 password = "Response123"
 # Leer nuestro modelo
-model = YOLO("Model.pt")
+model = YOLO("Model2.pt")
 
 # Realizar VideoCaptura
 cap = cv2.VideoCapture(0)
