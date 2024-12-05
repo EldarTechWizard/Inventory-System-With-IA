@@ -11,19 +11,24 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Cargar el archivo .env desde la carpeta config
+dotenv_path = BASE_DIR / 'config' / '.env'
 
+load_dotenv(dotenv_path)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-psn^+yd$&#myhk6-2w=#-hdic(rtko=0%!5v-7@q!jg(24(kc3'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG')
 
 ALLOWED_HOSTS = []
 
@@ -37,9 +42,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'ApiRest',
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'corsheaders',
+    'djoser'
 ]
 
+
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -47,6 +60,16 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
 ]
 
 ROOT_URLCONF = 'InventorySystem.urls'
@@ -75,10 +98,15 @@ WSGI_APPLICATION = 'InventorySystem.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv("DATABASE_NAME"),       # Nombre de la base de datos
+        'USER': os.getenv("DATABASE_USER"),       # Usuario de la base de datos
+        'PASSWORD': os.getenv("DATABASE_PASSWORD"), # Contraseña del usuario
+        'HOST': os.getenv("DATABASE_HOST", 'localhost'), # Host de la base de datos
+        'PORT': os.getenv("DATABASE_PORT", '3306'),     # Puerto de la base de datos
     }
 }
+
 
 
 # Password validation
@@ -121,3 +149,17 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# settings.py
+DJOSER = {
+    'SERIALIZERS': {
+        'user': 'ApiRest.serializers.CustomUserSerializer',
+        'current_user': 'ApiRest.serializers.CustomUserSerializer',
+        'user_create': 'ApiRest.serializers.CustomUserSerializer',
+    },
+}
+
+SIMPLE_JWT = {
+    'TOKEN_OBTAIN_SERIALIZER': 'ApiRest.serializers.CustomTokenObtainPairSerializer',
+}
+

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Login</title>
+
+	<!-- Enlace a Google Fonts (Roboto) -->
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+	
+	<!-- Enlace a Material Design Icons -->
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+	<!-- Otros estilos CSS -->
+	<link rel="stylesheet" href="css/normalize.css">
+	<link rel="stylesheet" href="css/sweetalert2.css">
+	<link rel="stylesheet" href="css/material.min.css">
+	<link rel="stylesheet" href="css/jquery.mCustomScrollbar.css">
+	<link rel="stylesheet" href="css/main.css">
+
+	<!-- Evitar que los campos de entrada muestren rojo antes de la validación -->
+	<style>m m 
+		body {
+			font-family: 'Roboto', sans-serif; /* Fuente principal */
+			font-size: 16px;
+			line-height: 1.6;
+		}
+
+		.mdl-textfield.is-invalid .mdl-textfield__input {
+			border-bottom-color: transparent; /* Quitar el borde rojo por defecto */
+			box-shadow: none; /* Eliminar el efecto visual del error */
+		}
+
+		/* Aumentar el tamaño del ícono de account_circle */
+		.icon-large {
+			font-size: 120px; /* Tamaño personalizado del ícono */
+		}
+	</style>
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<script>window.jQuery || document.write('<script src="js/jquery-1.11.2.min.js"><\/script>')</script>
+	<script src="js/material.min.js"></script>
+	<script src="js/sweetalert2.min.js"></script>
+	<script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+	<script src="js/main.js"></script>
+</head>
+<body class="cover">
+	<div class="container-login">
+		<p class="text-center">
+			<i class="material-icons icon-large">account_circle</i> <!-- Clase personalizada para el tamaño -->
+		</p>
+		<p class="text-center text-condensedLight">Sign in with your Account</p>
+		<form id="loginForm">
+			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+			    <input class="mdl-textfield__input" type="text" id="userName">
+			    <label class="mdl-textfield__label" for="userName" id="userLabel">User Name</label>
+			</div>
+			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+			    <input class="mdl-textfield__input" type="password" id="pass">
+			    <label class="mdl-textfield__label" for="pass">Password</label>
+			</div>
+			<button id="SingIn" class="mdl-button mdl-js-button mdl-js-ripple-effect" style="color: #3F51B5; float:right;" type="button">
+				Sign in <i class="material-icons">login</i>
+			</button>
+		</form>
+	</div>
+
+	<script>
+		// Array de usuarios simulados para demostración
+		const users = [
+			{ username: 'admin', password: 'admin123', role: 'Admin' },
+			{ username: 'user', password: 'password', role: 'User' }
+		];
+
+		document.getElementById('SingIn').addEventListener('click', function() {
+			const username = document.getElementById('userName').value;
+			const password = document.getElementById('pass').value;
+
+			// Eliminar las clases de error antes de la validación
+			document.getElementById('userName').parentNode.classList.remove('is-invalid');
+			document.getElementById('pass').parentNode.classList.remove('is-invalid');
+
+			// Validación simulada de usuario y contraseña
+			const user = users.find(u => u.username === username && u.password === password);
+
+			if (user) {
+				// Guardar información de usuario en SessionStorage
+				sessionStorage.setItem('username', user.username);
+				sessionStorage.setItem('role', user.role);
+
+				// Cambiar el texto de la etiqueta según el rol del usuario
+				const userLabel = document.getElementById('userLabel');
+				if (user.role === 'Admin') {
+					userLabel.textContent = 'Admin Name';
+				} else {
+					userLabel.textContent = 'User Name';
+				}
+
+				// Iniciar sesión con éxito
+				alert('Inicio de sesión exitoso. Bienvenido ' + username);
+				window.location.href = 'home.html'; // Redirige a home.html
+			} else {
+				// Credenciales incorrectas
+				Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: 'Usuario o contraseña incorrectos',
+				});
+
+				// Marcar los campos en rojo si la validación falla
+				document.getElementById('userName').parentNode.classList.add('is-invalid');
+				document.getElementById('pass').parentNode.classList.add('is-invalid');
+			}
+		});
+	</script>
+</body>
+</html>
