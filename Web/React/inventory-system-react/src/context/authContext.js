@@ -55,10 +55,6 @@ export const AuthProvider = ({ children }) => {
       setGroup(data.groups);
       setRefreshToken(data.refresh);
       navigate("/");
-    } else {
-      alert(
-        "Check login credentials :Something went wrong while logging in the user!"
-      );
     }
   };
 

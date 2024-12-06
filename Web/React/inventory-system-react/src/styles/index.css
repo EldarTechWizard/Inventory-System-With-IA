@@ -21,7 +21,7 @@ body {
 }
 
 .dashboard {
-  width: 80%;
+  width: 90%;
 }
 
 a {
@@ -35,4 +35,8 @@ li {
 
 ul {
   padding: 0;
+}
+
+.colorDarkBlue {
+  background-color: #004aad;
 }

@@ -1,11 +1,10 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:8000/api/"; // Replace with your base API URL
+const API_BASE_URL = "http://localhost:8000/api/";
 
-// Create an Axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000, // Adjust timeout as needed
+  timeout: 10000,
 });
 
 api.interceptors.request.use(
@@ -24,7 +23,6 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      // Unauthorized - log out user, for instance
       console.error("Unauthorized! Redirecting to login...");
     }
     return Promise.reject(error);
@@ -47,8 +45,13 @@ export const postData = async (endpoint, data) => {
     const response = await api.post(endpoint, data);
     return response.data;
   } catch (error) {
-    console.error("Error posting data:", error);
-    throw error;
+    if (error.response) {
+      console.error("Error details:", error.response.data);
+      throw error.response.data;
+    } else {
+      console.error("Network or unexpected error:", error.message);
+      throw { detail: "Network or unexpected error occurred." };
+    }
   }
 };
 
@@ -57,8 +60,13 @@ export const updateData = async (endpoint, data) => {
     const response = await api.put(endpoint, data);
     return response.data;
   } catch (error) {
-    console.error("Error updating data:", error);
-    throw error;
+    if (error.response) {
+      console.error("Error details:", error.response.data);
+      throw error.response.data;
+    } else {
+      console.error("Network or unexpected error:", error.message);
+      throw { detail: "Network or unexpected error occurred." };
+    }
   }
 };
 

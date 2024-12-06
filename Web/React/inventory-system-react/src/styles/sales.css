@@ -20,8 +20,10 @@
   height: 93%;
 }
 
-.salesContainer {
-  height: 55%;
+.ModalBarcode {
+  width: 40% !important;
+  position: absolute;
+  transform: translate(92%, 63%);
 }
 
 .footerContainer {

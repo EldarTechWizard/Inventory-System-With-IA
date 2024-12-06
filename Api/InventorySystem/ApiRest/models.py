@@ -84,9 +84,18 @@ class InventoryMovement(models.Model):
     movement_date = models.DateTimeField(auto_now_add=True)
     remarks = models.CharField(max_length=255, blank=True, null=True)
     user = models.ForeignKey(User,on_delete=models.CASCADE)
-    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"Movement #{self.movement_id}"
 
+class Expenses(models.Model):
+    expenses_id = models.AutoField(primary_key=True)
+    description = models.CharField(max_length=255)
+    amount = models.DecimalField(max_digits=10,decimal_places=2)
+    payment_method = models.CharField(max_length=255)
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    expenses_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Expenses #{self.expenses_id}"
 

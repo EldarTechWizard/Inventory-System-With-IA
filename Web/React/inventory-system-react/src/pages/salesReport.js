@@ -3,15 +3,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
-import {
-  Table,
-  Button,
-  Modal,
-  Form,
-  Row,
-  Col,
-  ModalBody,
-} from "react-bootstrap";
+import { Button, Modal, Form, ModalBody } from "react-bootstrap";
 import "../styles/report.css";
 import ModalSalesReport from "../components/modalSalesReport";
 

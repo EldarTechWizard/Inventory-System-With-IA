@@ -8,10 +8,10 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import PersonIcon from "@mui/icons-material/Person";
-import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import EventNoteIcon from "@mui/icons-material/EventNote";
 import TakeoutDiningIcon from "@mui/icons-material/TakeoutDining";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 
 const groups = [
   {
@@ -36,6 +36,7 @@ const groups = [
       { Productos: "Productos" },
       { Proveedores: "Proveedores" },
       { "Movimientos de inventario": "Movimientos-Inventario" },
+      { Gastos: "Expenses" },
     ],
   },
 ];
@@ -50,14 +51,12 @@ const icons = [
   { Productos: <TakeoutDiningIcon /> },
   { Proveedores: <LocalShippingIcon /> },
   { "Movimientos-Inventario": <InventoryIcon /> },
+  { Expenses: <MonetizationOnIcon /> },
 ];
 
 const IconDisplay = ({ prop }) => {
-  // Encuentra el primer objeto que contiene "Reporte-Inventario"
   const icon = icons.find((item) => item.hasOwnProperty(prop));
-  // Obtén el valor del primer objeto (el componente <DescriptionIcon />)
-  const iconComponent = Object.values(icon)[0]; // Esto obtiene el valor del objeto, que es el componente
-  console.log(icon);
+  const iconComponent = Object.values(icon)[0];
   return <>{iconComponent}</>;
 };
 

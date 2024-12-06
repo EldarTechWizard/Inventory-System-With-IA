@@ -1,28 +1,22 @@
 import django_filters
-from .models import (InventoryMovement,Order_detail,Order)
+from .models import (InventoryMovement,Order_detail,Order,Product, Expenses)
 
 
 class InventoryMovementFilter(django_filters.FilterSet):
-    # Filtro por rango de fechas
     start_date = django_filters.DateFilter(field_name="movement_date", lookup_expr="gte")
     end_date = django_filters.DateFilter(field_name="movement_date", lookup_expr="lte")
-
-    # Filtro por nombre del producto
     product_name = django_filters.CharFilter(field_name="product__product_name", lookup_expr="icontains")
-
-    # Filtro por nombre de usuario
     username = django_filters.CharFilter(field_name="user__username", lookup_expr="icontains")
 
     class Meta:
         model = InventoryMovement
         fields = [
-            'movement_type',  # Filtrar por tipo de movimiento (IN/OUT)
-            'start_date',     # Fecha de inicio (>=)
-            'end_date',       # Fecha de fin (<=)
-            'product_name',   # Filtrar por nombre de producto
-            'username',       # Filtrar por nombre de usuario
+            'movement_type',
+            'start_date',
+            'end_date',
+            'product_name',
+            'username',
         ]
-
 
 class OrderDetailFilter(django_filters.FilterSet):
     start_date = django_filters.DateFilter(field_name="order__order_date", lookup_expr="gte")
@@ -42,3 +36,18 @@ class OrderFilter(django_filters.FilterSet):
     class Meta:
         model = Order
         fields = ['start_date', 'end_date', 'customer_name', 'user']
+
+class ProductFilter(django_filters.FilterSet):
+    barcode = django_filters.CharFilter(lookup_expr='exact')  # Permite búsqueda parcial
+
+    class Meta:
+        model = Product
+        fields = ['barcode']
+
+class ExpensesFilter(django_filters.FilterSet):
+    start_date = django_filters.DateFilter(field_name="expenses_date", lookup_expr="gte")
+    end_date = django_filters.DateFilter(field_name="expenses_date", lookup_expr="lte")
+
+    class Meta:
+        model = Expenses
+        fields = ['start_date', 'end_date']

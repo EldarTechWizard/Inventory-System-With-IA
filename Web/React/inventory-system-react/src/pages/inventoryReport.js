@@ -15,7 +15,9 @@ import {
 import "../styles/report.css";
 import ModalInventoryReport from "../components/modalInventoryReport";
 function InventoryReport() {
-  const [dateLimitLeft, setDateLimitLeft] = useState(dayjs(new Date()));
+  const [dateLimitLeft, setDateLimitLeft] = useState(
+    dayjs(new Date("2024-01-02"))
+  );
   const [dateLimitRight, setDateLimitRight] = useState(dayjs(new Date()));
   const [show, setShow] = useState(false);
 

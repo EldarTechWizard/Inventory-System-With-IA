@@ -8,6 +8,7 @@ from .models import (
     Order_detail,
     InventoryMovement,
     Supplier,
+    Expenses
 )
 
 from djoser.serializers import UserSerializer as DjoserUserSerializer
@@ -42,7 +43,7 @@ class CustomUserSerializer(DjoserUserSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = '__all__'  # or specify fields explicitly, e.g., ['category_id', 'category_name', 'description']
+        fields = '__all__'
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -117,3 +118,10 @@ class LeastSellingProductSerializer(serializers.Serializer):
     category = serializers.CharField()
     quantity = serializers.IntegerField()
     total = serializers.DecimalField(max_digits=10, decimal_places=2)
+
+
+class ExpensesSerializer(serializers.ModelSerializer):
+    user = serializers.CharField(source='user.username', read_only=True)
+    class Meta:
+        model = Expenses
+        fields = '__all__'

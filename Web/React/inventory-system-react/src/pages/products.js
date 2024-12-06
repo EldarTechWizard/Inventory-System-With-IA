@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Button, Modal } from "react-bootstrap";
 import "../styles/products.css";
 import ModalFormProduct from "../components/formProduct";
 import { fetchData } from "../hooks/apiManager";
-
+import { Button } from "react-bootstrap";
+import SearchIcon from "@mui/icons-material/Search";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -12,7 +12,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import ModalFormSupplier from "../components/formSuppliers";
+import ModalFormCategory from "../components/formCategories";
 
 const columns = [
   { id: "product_id", label: "Id", minWidth: 100 },
@@ -62,12 +62,18 @@ const columns = [
     label: "Proveedor",
     minWidth: 170,
   },
+  { id: "actions", label: "Acciones", minWidth: 170 },
 ];
 
 function Products() {
   const [products, setProducts] = useState([]);
+  const [search, setSearch] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
+
   const getData = async () => {
-    setProducts(await fetchData("/products"));
+    const result = await fetchData("/products");
+    setProducts(result);
+    setFilteredData(result);
   };
   useEffect(() => {
     getData();
@@ -75,6 +81,13 @@ function Products() {
 
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+  const handleFilter = () => {
+    const filtered = products.filter((item) =>
+      item.product_name.toLowerCase().includes(search.toLowerCase())
+    );
+    setFilteredData(filtered);
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -88,8 +101,26 @@ function Products() {
   return (
     <div id="products" className="d-flex m-2 bg-white border p-2 flex-column">
       <div className="d-flex  p-2 justify-content-between">
-        <input type="text" placeholder="Search.." className="w-50" />
-        <ModalFormProduct getData={getData} />
+        <div className="d-flex">
+          <input
+            type="text"
+            placeholder="Search..."
+            className="w-100 rounded-0 rounded-start-3"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <Button
+            variant="primary"
+            onClick={handleFilter}
+            className="rounded-0 rounded-end-3"
+          >
+            <SearchIcon />
+          </Button>
+        </div>
+        <div className="h-100 d-flex gap-3">
+          <ModalFormCategory LabelButton="Agregar Categoria" />
+          <ModalFormProduct getData={getData} LabelButton="Agregar producto" />
+        </div>
       </div>
 
       <Paper
@@ -112,7 +143,7 @@ function Products() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {products
+              {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
                   return (
@@ -120,9 +151,22 @@ function Products() {
                       hover
                       role="checkbox"
                       tabIndex={-1}
-                      key={row.code}
+                      key={row.product_id}
                     >
                       {columns.map((column) => {
+                        // Renderizar la columna de acciones
+                        if (column.id === "actions") {
+                          return (
+                            <TableCell key={column.id} align={column.align}>
+                              <ModalFormProduct
+                                getData={getData}
+                                LabelButton="Editar"
+                                product={row}
+                              />
+                            </TableCell>
+                          );
+                        }
+
                         const value = row[column.id];
                         return (
                           <TableCell key={column.id} align={column.align}>

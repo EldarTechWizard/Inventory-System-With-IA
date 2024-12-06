@@ -1,3 +1,7 @@
-.textFieldsContainers > * {
-  padding-top: 1rem;
+.customer > .modal-dialog {
+  width: 50%;
+}
+
+.text-danger{
+  padding-top: 4px;
 }

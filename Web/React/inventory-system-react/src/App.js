@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Login from "./pages/login";
 import Main from "./pages/main";
-import ProtectedRoute from "./components/protectedRoute";
 import { BrowserRouter, Route, Routes, Switch } from "react-router-dom";
 import InventoryReport from "./pages/inventoryReport";
 import SalesReport from "./pages/salesReport";
@@ -14,6 +13,7 @@ import { AuthProvider } from "./context/authContext";
 import ProtectedComponent from "./components/protectedRoute";
 import InventoryMovement from "./pages/inventoryMovement";
 import MostSalesReport from "./pages/mostSalesResport";
+import Expenses from "./pages/expenses";
 
 function App() {
   return (
@@ -115,6 +115,16 @@ function App() {
             element={
               <ProtectedComponent
                 component={InventoryMovement}
+                roles={["Admin", "Warehouse"]}
+              />
+            }
+          />
+
+          <Route
+            path="/Expenses"
+            element={
+              <ProtectedComponent
+                component={Expenses}
                 roles={["Admin", "Warehouse"]}
               />
             }

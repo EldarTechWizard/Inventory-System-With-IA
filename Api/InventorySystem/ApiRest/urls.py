@@ -20,7 +20,9 @@ from .views import (
     LessSellingProductsListView,
     ProductBelowMinimumStockView,
     ProductApproachingExpirationView,
-    ExpiredProductsView
+    ExpiredProductsView,
+    ExpensesListCreate,
+    ExpensesUpdate
 )
 
 urlpatterns = [
@@ -52,7 +54,11 @@ urlpatterns = [
     path('order-details/less-selling/', LessSellingProductsListView.as_view(), name='order-details-less-selling'),
 
     path('products/need-stock/', ProductBelowMinimumStockView.as_view(), name='products-need-stock'),
-     path('products/approaching-expiration/', ProductApproachingExpirationView.as_view(), name='products_approaching_expiration'),
-      path('products/expired/', ExpiredProductsView.as_view(), name='expired_products'),
+    path('products/approaching-expiration/', ProductApproachingExpirationView.as_view(), name='products_approaching_expiration'),
+    path('products/expired/', ExpiredProductsView.as_view(), name='expired_products'),
+
+
+    path('expenses/', ExpensesListCreate.as_view(), name='expenses-list-create'),
+    path('expenses/<int:pk>/', ExpensesUpdate.as_view(), name='expenses-update'),
 ]
 

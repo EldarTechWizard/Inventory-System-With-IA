@@ -3,20 +3,14 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
-import {
-  Table,
-  Button,
-  Modal,
-  Form,
-  Row,
-  Col,
-  ModalBody,
-} from "react-bootstrap";
+import { Button, Modal, Form, ModalBody } from "react-bootstrap";
 import "../styles/report.css";
 import ModalMostSalesReport from "../components/modalMostSalesReport";
 
 function MostSalesReport() {
-  const [dateLimitLeft, setDateLimitLeft] = useState(dayjs(new Date()));
+  const [dateLimitLeft, setDateLimitLeft] = useState(
+    dayjs(new Date("2024-01-02"))
+  );
   const [dateLimitRight, setDateLimitRight] = useState(dayjs(new Date()));
   const [show, setShow] = useState(false);
 

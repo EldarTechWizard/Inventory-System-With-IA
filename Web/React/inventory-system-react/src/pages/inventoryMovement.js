@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import ModalFormInventoryMovement from "../components/formInventoryMovement";
 import { fetchData } from "../hooks/apiManager";
-
+import { Button } from "react-bootstrap";
+import SearchIcon from "@mui/icons-material/Search";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -34,12 +35,23 @@ const columns = [
     label: "Producto",
     minWidth: 170,
   },
+  {
+    id: "user",
+    label: "Responsable",
+    minWidth: 170,
+  },
+  { id: "actions", label: "Acciones", minWidth: 170 },
 ];
 
 function InventoryMovement() {
   const [inventoryMovements, setInventoryMovements] = useState([]);
+  const [search, setSearch] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
+
   const getData = async () => {
-    setInventoryMovements(await fetchData("/inventory-movements"));
+    const result = await fetchData("/inventory-movements");
+    setInventoryMovements(result);
+    setFilteredData(result);
   };
 
   useEffect(() => {
@@ -48,6 +60,13 @@ function InventoryMovement() {
 
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+  const handleFilter = () => {
+    const filtered = inventoryMovements.filter((item) =>
+      item.product_name.toLowerCase().includes(search.toLowerCase())
+    );
+    setFilteredData(filtered);
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -64,8 +83,28 @@ function InventoryMovement() {
       className="d-flex m-2 bg-white border p-2 flex-column"
     >
       <div className="d-flex w-100 p-2 justify-content-between">
-        <input type="text" placeholder="Search.." className="w-50" />
-        <ModalFormInventoryMovement getData={getData} />
+        <div className="d-flex">
+          <input
+            type="text"
+            placeholder="Search..."
+            className="w-100 rounded-0 rounded-start-3"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <Button
+            variant="primary"
+            onClick={handleFilter}
+            className="rounded-0 rounded-end-3"
+          >
+            <SearchIcon />
+          </Button>
+        </div>
+        <div className="h-100">
+          <ModalFormInventoryMovement
+            getData={getData}
+            LabelButton="Agregar movimiento"
+          />
+        </div>
       </div>
 
       <Paper sx={{ width: "100%" }} className="no-p-margin mt-3">
@@ -85,7 +124,7 @@ function InventoryMovement() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {inventoryMovements
+              {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
                   return (
@@ -96,6 +135,18 @@ function InventoryMovement() {
                       key={row.code}
                     >
                       {columns.map((column) => {
+                        if (column.id === "actions") {
+                          return (
+                            <TableCell key={column.id} align={column.align}>
+                              <ModalFormInventoryMovement
+                                getData={getData}
+                                inventoryMovement={row}
+                                LabelButton="Editar"
+                              />
+                            </TableCell>
+                          );
+                        }
+
                         const value = row[column.id];
                         return (
                           <TableCell key={column.id} align={column.align}>

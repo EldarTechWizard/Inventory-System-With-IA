@@ -126,8 +126,8 @@ function Header() {
       <h6>Pages / {pathname}</h6>
       <IconButton onClick={handleClick}>
         <Badge
-          badgeContent={notificationCount > 0 ? notificationCount : null} // El número de notificaciones
-          color="error" // Estilo para el círculo rojo
+          badgeContent={notificationCount > 0 ? notificationCount : null}
+          color="error"
         >
           <NotificationsIcon />
         </Badge>

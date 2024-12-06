@@ -6,7 +6,12 @@ import { fetchData } from "../hooks/apiManager";
 function ModalSalesReport({ startDate, endDate }) {
   const [data, setData] = useState([]);
   const [total, setTotal] = useState(null);
+  const [expenses, setExpense] = useState(null);
+  const [gains, setGains] = useState(null);
   const [pdfBlob, setPdfBlob] = useState(null);
+
+  const [sellTotal, setSellTotal] = useState(null);
+  const [expensesTotal, setExpensesTotal] = useState(null);
 
   const generatePDF = () => {
     const doc = new jsPDF();
@@ -59,38 +64,80 @@ function ModalSalesReport({ startDate, endDate }) {
       },
     });
 
-    // Tabla de totales alineada a la derecha
-
-    // Posición inicial para el encabezado de la tabla de totales
     const startY = doc.autoTable.previous.finalY + 10;
-
-    // Encabezado para la tabla de totales
-    doc.setFillColor(41, 128, 185); // Color azul
-    const tableWidth = 100; // Ancho de la tabla de totales (ajústalo según el tamaño de la tabla)
+    doc.setFillColor(41, 128, 185);
+    const tableWidth = 80;
     doc.rect(
       doc.internal.pageSize.width - tableWidth - 10,
       startY,
       tableWidth,
       10,
       "F"
-    ); // Dibuja el fondo azul
+    );
     doc.setFontSize(10);
-    doc.setTextColor(255, 255, 255); // Color de texto blanco
+    doc.setTextColor(255, 255, 255);
     doc.text(
       "Totales por Forma de Pago",
-      doc.internal.pageSize.width - tableWidth,
+      doc.internal.pageSize.width - 73,
       startY + 7
-    ); // Texto centrado dentro del rectángulo
-
-    // Generar la tabla de totales
+    );
     doc.autoTable({
-      startY: startY + 10, // Posiciona la tabla debajo del encabezado
+      startY: startY + 10,
       body: total,
       theme: "grid",
-      margin: { left: doc.internal.pageSize.width - tableWidth - 10 }, // Ajusta el margen izquierdo para alinear la tabla a la derecha
+      margin: { left: 120 },
       headStyles: { fillColor: [41, 128, 185] },
       columnStyles: {
-        0: { cellWidth: 60 },
+        0: { cellWidth: 40 },
+        1: { cellWidth: 40, halign: "right" },
+      },
+      styles: { fontSize: 10 },
+    });
+
+    doc.rect(14, startY, tableWidth, 10, "F");
+    doc.setFontSize(10);
+    doc.setFillColor(41, 128, 185);
+    doc.setTextColor(255, 255, 255);
+    doc.text("Gastos por Forma de Pago", 30, startY + 7);
+    doc.autoTable({
+      startY: startY + 10,
+      body: expenses,
+      theme: "grid",
+      margin: { left: 14 },
+      headStyles: { fillColor: [41, 128, 185] },
+      columnStyles: {
+        0: { cellWidth: 40 },
+        1: { cellWidth: 40, halign: "right" },
+      },
+      styles: { fontSize: 10 },
+    });
+
+    const startY2 = startY + 32;
+
+    doc.rect(
+      doc.internal.pageSize.width - tableWidth - 10,
+      startY2,
+      tableWidth,
+      10,
+      "F"
+    );
+    doc.setFontSize(10);
+    doc.setFillColor(41, 128, 185);
+    doc.setTextColor(255, 255, 255);
+    doc.text(
+      "Ganancias por periodo",
+      doc.internal.pageSize.width - 73,
+      startY2 + 7
+    );
+
+    doc.autoTable({
+      startY: startY2 + 10,
+      body: gains,
+      theme: "grid",
+      margin: { left: 120 },
+      headStyles: { fillColor: [41, 128, 185] },
+      columnStyles: {
+        0: { cellWidth: 40 },
         1: { cellWidth: 40, halign: "right" },
       },
       styles: { fontSize: 10 },
@@ -100,35 +147,62 @@ function ModalSalesReport({ startDate, endDate }) {
     setPdfBlob(blob);
   };
 
+  const getData = async () => {
+    const aux = await fetchData(
+      `/orders/?start_date=${startDate}&end_date=${endDate}`
+    );
+
+    setData(aux);
+
+    const totalAux = aux.reduce((total, item) => {
+      return total + parseFloat(item.total_amount);
+    }, 0);
+
+    setSellTotal(totalAux);
+
+    const totalFormatted = `$${totalAux.toFixed(2)}`;
+    setTotal([
+      ["Efectivo:", totalFormatted],
+      ["Total:", totalFormatted],
+    ]);
+  };
+
+  const getExpenses = async () => {
+    const aux = await fetchData(
+      `/expenses/?start_date=${startDate}&end_date=${endDate}`
+    );
+
+    const totalAux = aux.reduce((total, item) => {
+      return total + parseFloat(item.amount);
+    }, 0);
+
+    setExpensesTotal(totalAux);
+
+    const totalFormatted = `$${totalAux.toFixed(2)}`;
+
+    setExpense([
+      ["Efectivo", totalFormatted],
+      ["Total", totalFormatted],
+    ]);
+  };
   useEffect(() => {
-    const getData = async () => {
-      const aux = await fetchData(
-        `/orders/?start_date=${startDate}&end_date=${endDate}`
-      );
-
-      setData(aux);
-
-      // Calcular el total directamente aquí
-      const totalAux = aux.reduce((total, item) => {
-        return total + parseFloat(item.total_amount);
-      }, 0);
-
-      const totalFormatted = `$${totalAux.toFixed(2)}`;
-      setTotal([
-        ["Efectivo:", totalFormatted],
-        ["Total:", totalFormatted],
-      ]);
-    };
-
     getData();
+    getExpenses();
   }, []); // Solo depende de las fechas
 
   useEffect(() => {
     // Generar el PDF solo si `data` y `total` están completamente establecidos
-    if (data && total) {
+    if (data && total && expenses) {
+      const gains = sellTotal - expensesTotal;
+      setGains([
+        ["Vendido", `$${sellTotal}`],
+        ["Gastos", `$${expensesTotal}`],
+        ["Total", `$${gains}`],
+      ]);
+
       generatePDF();
     }
-  }, [data, total]);
+  }, [data, total, expenses]);
 
   return (
     <div>

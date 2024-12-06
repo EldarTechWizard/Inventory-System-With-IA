@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { fetchData } from "../hooks/apiManager";
-
+import { Button } from "react-bootstrap";
+import SearchIcon from "@mui/icons-material/Search";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -39,13 +40,18 @@ const columns = [
     label: "Fecha de registro",
     minWidth: 170,
   },
+  { id: "actions", label: "Acciones", minWidth: 170 },
 ];
 
 function Suppliers() {
   const [suppliers, setSuppliers] = useState([]);
+  const [search, setSearch] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
 
   const getData = async () => {
-    setSuppliers(await fetchData("/suppliers"));
+    const result = await fetchData("/suppliers");
+    setSuppliers(result);
+    setFilteredData(result);
   };
 
   useEffect(() => {
@@ -54,6 +60,13 @@ function Suppliers() {
 
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+  const handleFilter = () => {
+    const filtered = suppliers.filter((item) =>
+      item.supplier_name.toLowerCase().includes(search.toLowerCase())
+    );
+    setFilteredData(filtered);
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -66,9 +79,26 @@ function Suppliers() {
 
   return (
     <div id="suppliers" className="d-flex m-2 bg-white border p-2 flex-column">
-      <div className="d-flex w-100 p-2 justify-content-between">
-        <input type="text" placeholder="Search.." className="w-50" />
-        <ModalFormSupplier getData={getData} />
+      <div className="d-flex w-100 p-2 justify-content-between align-items-center">
+        <div className="d-flex">
+          <input
+            type="text"
+            placeholder="Search..."
+            className="w-100 rounded-0 rounded-start-3"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <Button
+            variant="primary"
+            onClick={handleFilter}
+            className="rounded-0 rounded-end-3"
+          >
+            <SearchIcon />
+          </Button>
+        </div>
+        <div className="h-100">
+          <ModalFormSupplier getData={getData} LabelButton="Agregar provedor" />
+        </div>
       </div>
 
       <Paper sx={{ width: "100%" }} className="no-p-margin mt-3">
@@ -88,7 +118,7 @@ function Suppliers() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {suppliers
+              {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
                   return (
@@ -99,6 +129,18 @@ function Suppliers() {
                       key={row.code}
                     >
                       {columns.map((column) => {
+                        if (column.id === "actions") {
+                          return (
+                            <TableCell key={column.id} align={column.align}>
+                              <ModalFormSupplier
+                                getData={getData}
+                                LabelButton="Editar"
+                                supplier={row}
+                              />
+                            </TableCell>
+                          );
+                        }
+
                         const value = row[column.id];
                         return (
                           <TableCell key={column.id} align={column.align}>

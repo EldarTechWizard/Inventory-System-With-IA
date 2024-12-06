@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
-import { filledInputClasses } from "@mui/material";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
+import { Button, Modal, Form } from "react-bootstrap";
 import InputGroup from "react-bootstrap/InputGroup";
 import "../styles/sales.css";
+import barcodeImg from "../assets/Barcode.png";
 import { fetchData, postData } from "../hooks/apiManager";
+import DeleteIcon from "@mui/icons-material/Delete";
+import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import LocalSeeIcon from "@mui/icons-material/LocalSee";
 
 function Sales() {
   const [cart, setCart] = useState([]);
@@ -15,6 +17,26 @@ function Sales() {
   const [products, setProducts] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [total, setTotal] = useState(0);
+  const [show, setShow] = useState(false);
+  const [barcode, setBarcode] = useState(null);
+  const [error, setError] = useState("");
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+  const handleConfirmModalClose = () => setShowConfirmModal(false); // Cierra el modal de confirmación
+  const handleConfirmModalShow = () => {
+    if (cart.length === 0) {
+      return;
+    }
+
+    setShowConfirmModal(true);
+  };
+
+  const handleClose = () => {
+    setShow(false);
+    setError("");
+    setBarcode(null);
+  };
+  const handleShow = () => setShow(true);
 
   const calculateTotal = () => {
     setTotal(
@@ -32,12 +54,10 @@ function Sales() {
   const deleteCart = (id) => {
     const selectedIds = selectedRows.map((p) => p.id);
 
-    // Actualiza el carrito eliminando todos los elementos seleccionados
     setCart((prevCart) =>
       prevCart.filter((item) => !selectedIds.includes(item.id))
     );
 
-    // Limpia la selección
     setSelectedRows([]);
   };
 
@@ -78,7 +98,6 @@ function Sales() {
 
   const handleConfirm = async () => {
     const order = { customers: 1, total_amount: String(total.toFixed(2)) };
-    console.log(order);
     const result = await postData("/orders/", order);
 
     if (result) {
@@ -89,12 +108,30 @@ function Sales() {
         unit_price: String(item.sell_price),
       }));
 
-      console.log(order_details);
-
       const resultOrderDetails = await postData(
         "/order-details/post-list/",
         order_details
       );
+
+      setCart([]);
+    }
+
+    handleConfirmModalClose();
+  };
+
+  const handleSearchProduct = async () => {
+    const result = await fetchData(`products/?barcode=${barcode}`);
+
+    if (result.length) {
+      addToCart({
+        id: result[0].product_id,
+        name: result[0].product_name,
+        sell_price: result[0].sell_price,
+        quantity: 1,
+      });
+      handleClose();
+    } else {
+      setError("*Producto no encontrado*");
     }
   };
 
@@ -216,23 +253,60 @@ function Sales() {
       </div>
       <div className="d-flex flex-column w-100 mt-3 footerContainer">
         <div className="d-flex w-100 justify-content-between footerBar">
-          <Form.Select
-            className="comboBox h-2"
-            onChange={(e) => {
-              setSelectedCategory(e.target.value);
-            }}
-          >
-            <option value={0}>{"Seleccion una categoria"}</option>
-            {categories.map((p) => (
-              <option value={p.category_id}>{p.category_name}</option>
-            ))}
-          </Form.Select>
-          <div className="controls d-flex gx-5  justify-content-end">
+          <div className="d-flex gap-2">
+            <Form.Select
+              className=" h-2"
+              onChange={(e) => {
+                setSelectedCategory(e.target.value);
+              }}
+            >
+              <option value={0}>{"Selecciona una categoria"}</option>
+              {categories.map((p) => (
+                <option value={p.category_id}>{p.category_name}</option>
+              ))}
+            </Form.Select>
             <Button variant="danger" onClick={handleDelete}>
-              Delete
+              <DeleteIcon />
             </Button>
-            <Button variant="success" onClick={handleConfirm} className="mx-3">
-              Confirm
+          </div>
+
+          <div className="controls d-flex gap-2  justify-content-end">
+            <Modal show={show} onHide={handleClose} className="ModalBarcode">
+              <Modal.Body>
+                <div className="d-flex align-items-center gap-2">
+                  <img src={barcodeImg} alt="" width={70} height={35} />
+
+                  <Form.Control
+                    type="text"
+                    value={barcode}
+                    onChange={(e) => setBarcode(e.target.value)}
+                  />
+                </div>
+                <div className="d-flex justify-content-between mt-3 align-items-center">
+                  <Button variant="danger" onClick={handleClose}>
+                    Cerrar
+                  </Button>
+                  <p className="m-0 text-danger">{error}</p>
+                  <Button variant="primary" onClick={handleSearchProduct}>
+                    Buscar
+                  </Button>
+                </div>
+              </Modal.Body>
+            </Modal>
+            <Button
+              onClick={handleShow}
+              className="align-items-center d-flex gap-2 colorDarkBlue text-nowrap"
+            >
+              <LocalSeeIcon />
+              Escanear producto
+            </Button>
+            <Button
+              variant="success"
+              onClick={handleConfirmModalShow}
+              className="align-items-center d-flex gap-2"
+            >
+              <InsertDriveFileIcon />
+              Confirmar
             </Button>
             <InputGroup className="inputGroup">
               <InputGroup.Text
@@ -251,6 +325,23 @@ function Sales() {
               />
             </InputGroup>
           </div>
+          <Modal show={showConfirmModal} onHide={handleConfirmModalClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Confirmar Compra</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              ¿Está seguro que desea confirmar la compra por un total de $
+              {total.toFixed(2)}?
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleConfirmModalClose}>
+                Cancelar
+              </Button>
+              <Button variant="success" onClick={handleConfirm}>
+                Confirmar
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </div>
         <div className="mh-100 mt-2 p-2 productsContainer">
           {products.map((product) => (

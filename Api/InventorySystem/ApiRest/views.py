@@ -7,7 +7,7 @@ from django.utils import timezone
 from datetime import timedelta
 from .permissions import ManagerPermissions,EmployeePermissions,WarehouseManagerPermissions
 from django.shortcuts import get_object_or_404
-from .filters import (InventoryMovementFilter,OrderFilter)
+from .filters import (InventoryMovementFilter,OrderFilter,ProductFilter)
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from django.db.models import Sum, F, Value
@@ -20,6 +20,7 @@ from .models import (
     Supplier,
     InventoryMovement,
     Customer,
+    Expenses
 )
 from .serializers import (
     ProductSerializer,
@@ -32,7 +33,8 @@ from .serializers import (
     SupplierSerializer,
     CustomTokenObtainPairSerializer,
     TopSellingProductSerializer,
-    LeastSellingProductSerializer
+    LeastSellingProductSerializer,
+    ExpensesSerializer
 )
 
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -45,6 +47,8 @@ class ProductListCreate(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ProductFilter
 
     def perform_create(self, serializer):
         user = self.request.user
@@ -267,4 +271,18 @@ class SupplierListCreate(generics.ListCreateAPIView):
 class SupplierUpdate(generics.RetrieveUpdateAPIView):
     queryset = Supplier.objects.all()
     serializer_class = SupplierSerializer
+    permission_classes = [WarehouseManagerPermissions]
+
+class ExpensesListCreate(generics.ListCreateAPIView):
+    queryset = Expenses.objects.all()
+    serializer_class = ExpensesSerializer
+    permission_classes = [WarehouseManagerPermissions]
+
+    def perform_create(self, serializer):
+        # Asocia automáticamente el usuario autenticado con la orden
+        serializer.save(user=self.request.user)
+
+class ExpensesUpdate(generics.RetrieveUpdateAPIView):
+    queryset = Expenses.objects.all()
+    serializer_class = ExpensesSerializer
     permission_classes = [WarehouseManagerPermissions]
