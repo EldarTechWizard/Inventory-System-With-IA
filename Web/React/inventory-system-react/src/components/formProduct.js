@@ -41,7 +41,11 @@ function ModalFormProduct({ getData, product, LabelButton }) {
   const [suppliers, setSuppliers] = useState([]);
 
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleShow = () => {
+    setShow(true);
+    fetchData("/categories").then(setCategories).catch(console.error);
+    fetchData("/suppliers").then(setSuppliers).catch(console.error);
+  };
 
   const [productName, setProductName] = useState("");
   const [barcode, setBarcode] = useState("");
@@ -52,11 +56,6 @@ function ModalFormProduct({ getData, product, LabelButton }) {
   const [supplier_id, setSupplier_id] = useState("");
   const [sellPrice, setSellPrice] = useState("");
   const [minimumStockLevel, setMinumumStockLevel] = useState("");
-
-  useEffect(() => {
-    fetchData("/categories").then(setCategories).catch(console.error);
-    fetchData("/suppliers").then(setSuppliers).catch(console.error);
-  }, []);
 
   useEffect(() => {
     if (product) {
