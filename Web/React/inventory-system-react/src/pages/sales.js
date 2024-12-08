@@ -13,7 +13,9 @@ import LocalSeeIcon from "@mui/icons-material/LocalSee";
 function Sales() {
   const [cart, setCart] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [customers, setCustomers] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCustomer, setSelectedCustomer] = useState("");
   const [products, setProducts] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [total, setTotal] = useState(0);
@@ -22,7 +24,10 @@ function Sales() {
   const [error, setError] = useState("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
-  const handleConfirmModalClose = () => setShowConfirmModal(false); // Cierra el modal de confirmación
+  const handleConfirmModalClose = () => {
+    setShowConfirmModal(false);
+    setError("");
+  }; // Cierra el modal de confirmación
   const handleConfirmModalShow = () => {
     if (cart.length === 0) {
       return;
@@ -51,6 +56,7 @@ function Sales() {
       setCart((prevCart) => [...prevCart, product]);
     }
   };
+
   const deleteCart = (id) => {
     const selectedIds = selectedRows.map((p) => p.id);
 
@@ -69,6 +75,30 @@ function Sales() {
     );
   };
 
+  const handleQuantityChange = (id, newQuantity) => {
+    if (/^\d*$/.test(newQuantity)) {
+      setCart((prevRows) =>
+        prevRows.map((row) =>
+          row.id === id ? { ...row, quantity: newQuantity } : row
+        )
+      );
+    }
+  };
+
+  const handleBlur = (id, newQuantity) => {
+    if (newQuantity === "0") {
+      setCart((prevRows) =>
+        prevRows.map((row) => (row.id === id ? { ...row, quantity: 1 } : row))
+      );
+      handleDecrement(id);
+    }
+    if (newQuantity.trim() === "") {
+      setCart((prevRows) =>
+        prevRows.map((row) => (row.id === id ? { ...row, quantity: 1 } : row))
+      );
+    }
+  };
+
   const handleDecrement = (id) => {
     setCart((prevRows) =>
       prevRows
@@ -85,8 +115,8 @@ function Sales() {
   };
 
   const handleSelectionChange = (newSelectionModel) => {
-    const selectedData = cart.filter(
-      (row) => newSelectionModel.includes(row.id) // Filtra las filas seleccionadas
+    const selectedData = cart.filter((row) =>
+      newSelectionModel.includes(row.id)
     );
     setSelectedRows(selectedData);
   };
@@ -97,7 +127,16 @@ function Sales() {
   };
 
   const handleConfirm = async () => {
-    const order = { customers: 1, total_amount: String(total.toFixed(2)) };
+    if (!selectedCustomer) {
+      setError("Debe seleccionar un cliente antes de confirmar la compra.");
+      return;
+    }
+
+    const order = {
+      customers: selectedCustomer,
+      total_amount: String(total.toFixed(2)),
+    };
+
     const result = await postData("/orders/", order);
 
     if (result) {
@@ -160,13 +199,39 @@ function Sales() {
       field: "quantity",
       headerName: "Cantidad",
       headerClassName: "super-app-theme--header",
-
+      cellClassName: (params) =>
+        "d-flex justify-content-center no-focus-outline",
       flex: 1,
       renderCell: (params) => (
         <div className="d-flex justify-content-center align-items-center">
-          <Button onClick={() => handleDecrement(params.row.id)}>-</Button>
-          <span className="mx-3">{params.row.quantity}</span>
-          <Button onClick={() => handleIncrement(params.row.id)}>+</Button>
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDecrement(params.row.id);
+            }}
+          >
+            -
+          </Button>
+          <input
+            type="text"
+            className="mx-3 form-control text-center no-focus-outline"
+            style={{ width: "60px" }}
+            value={params.row.quantity}
+            onClick={(e) => e.stopPropagation()}
+            onBlur={(e) => handleBlur(params.row.id, e.target.value)}
+            onChange={(e) => {
+              e.stopPropagation();
+              handleQuantityChange(params.row.id, e.target.value);
+            }}
+          />
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleIncrement(params.row.id);
+            }}
+          >
+            +
+          </Button>
         </div>
       ),
     },
@@ -187,6 +252,7 @@ function Sales() {
   useEffect(() => {
     const fetchCategories = async () => {
       setCategories(await fetchData("/categories/"));
+      setCustomers(await fetchData("/customers/"));
     };
 
     fetchCategories();
@@ -223,6 +289,7 @@ function Sales() {
             disableAutosize
             disableColumnSorting
             disableColumnResize
+            disableRowSelectionOnClick
             hideFooter
             onRowSelectionModelChange={handleSelectionChange}
             selectionModel={selectedRows.map((row) => row.id)}
@@ -241,8 +308,12 @@ function Sales() {
               "& .MuiDataGrid-row:hover": {
                 backgroundColor: "inherit", // Quita el efecto hover en las filas
               },
+              "& .MuiDataGrid-cell": {
+                display: "flex",
+                alignItems: "center",
+              },
               "& .MuiDataGrid-cell:focus": {
-                outline: "none", // Elimina el efecto de focus en las celdas
+                outline: "none",
               },
               "& .MuiDataGrid-root": {
                 overflowX: "auto",
@@ -330,6 +401,29 @@ function Sales() {
               <Modal.Title>Confirmar Compra</Modal.Title>
             </Modal.Header>
             <Modal.Body>
+              <div className="mb-3">
+                <label htmlFor="customer-select" className="form-label">
+                  Seleccione un cliente
+                </label>
+                <select
+                  id="customer-select"
+                  className="form-select"
+                  value={selectedCustomer}
+                  onChange={(e) => setSelectedCustomer(e.target.value)}
+                >
+                  <option value="">-- Seleccione un cliente --</option>
+
+                  {customers.map((customer) => (
+                    <option
+                      key={customer.customer_id}
+                      value={customer.customer_id}
+                    >
+                      {customer.name}
+                    </option>
+                  ))}
+                </select>
+                <p className="m-0 text-danger">{error}</p>
+              </div>
               ¿Está seguro que desea confirmar la compra por un total de $
               {total.toFixed(2)}?
             </Modal.Body>

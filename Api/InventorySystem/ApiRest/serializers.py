@@ -52,7 +52,7 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = '__all__'
-        read_only_field = ["order_date",]
+        read_only_field = ["registration_date",]
 
 
 class CustomerSerializer(serializers.ModelSerializer):
@@ -73,7 +73,6 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class OrderDetailSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Order_detail
         fields = '__all__'

@@ -40,5 +40,6 @@
   gap: 10px;
 }
 
-.productButton {
+.no-focus-outline:focus{
+  outline: none;
 }

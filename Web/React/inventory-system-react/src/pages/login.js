@@ -35,10 +35,10 @@ function Login() {
   };
 
   return (
-    <div className="w-100 h-100 d-flex align-items-center justify-content-center gap-4 pt-5">
-      <div className="d-flex flex-column formContainer gap-2 h-100 ">
+    <div className="w-100 h-100 d-flex align-items-center justify-content-center gap-5 pt-5">
+      <div className="d-flex flex-column formContainer gap-2 h-100">
         <div className="d-flex flex-column text-center gap-5 ">
-          <img src={logo} alt="Logo" width={500} height={190} />
+          <img src={logo} alt="Logo" width={500} height={170} />
           <p>Ingresa tu Usuario y Contraseña para continuar</p>
         </div>
         <Form className="d-flex" onSubmit={handleLogin}>
@@ -62,7 +62,7 @@ function Login() {
           </div>
         </Form>
       </div>
-      <div className="d-flex flex-column justify-content-center align-items-center">
+      <div className="d-flex flex-column justify-content-center imageContainer align-items-center">
         <h5 className="leftTittle text-center">
           Bienvenido a su Sistema de Inventario de Calidad y Confianza
         </h5>

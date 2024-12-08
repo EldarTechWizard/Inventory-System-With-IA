@@ -10,14 +10,12 @@ function ModalFormExpenses({ getData, expense, LabelButton }) {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  // Valores iniciales del formulario
   const initialValues = {
     description: expense?.description || "",
     paymentMethod: expense?.payment_method || "",
     amount: expense?.amount || "",
   };
 
-  // Esquema de validación con Yup
   const validationSchema = Yup.object().shape({
     description: Yup.string()
       .required("La descripción es obligatoria.")
@@ -30,7 +28,6 @@ function ModalFormExpenses({ getData, expense, LabelButton }) {
       .min(0.01, "El monto debe ser mayor a 0."),
   });
 
-  // Manejo del envío del formulario
   const handleSubmit = async (values, { resetForm }) => {
     const data = {
       description: values.description,

@@ -119,7 +119,6 @@ class CategoryUpdate(generics.RetrieveUpdateAPIView):
     permission_classes = [WarehouseManagerPermissions]
 
 
-# Customer Views
 class CustomerListCreate(generics.ListCreateAPIView):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
@@ -131,7 +130,7 @@ class CustomerUpdate(generics.RetrieveUpdateAPIView):
     serializer_class = CustomerSerializer
     permission_classes = [EmployeePermissions]
 
-# Order Views
+
 class OrderListCreate(generics.ListCreateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
@@ -140,7 +139,6 @@ class OrderListCreate(generics.ListCreateAPIView):
     filterset_class = OrderFilter
 
     def perform_create(self, serializer):
-        # Asocia automáticamente el usuario autenticado con la orden
         serializer.save(user=self.request.user)
 
 
@@ -149,7 +147,7 @@ class OrderUpdate(generics.RetrieveUpdateAPIView):
     serializer_class = OrderSerializer
     permission_classes = [EmployeePermissions]
 
-# OrderDetail Views
+
 class OrderDetailListCreate(generics.ListAPIView):
     queryset = Order_detail.objects.all()
     serializer_class = OrderDetailSerializer
@@ -246,7 +244,7 @@ class OrderDetailUpdate(generics.RetrieveUpdateAPIView):
     serializer_class = OrderDetailSerializer
     permission_classes = [EmployeePermissions]
 
-# InventoryMovement Views
+
 class InventoryMovementListCreate(generics.ListCreateAPIView):
     queryset = InventoryMovement.objects.all()
     serializer_class = InventoryMovementSerializer
@@ -261,7 +259,7 @@ class InventoryMovementUpdate(generics.RetrieveUpdateAPIView):
     serializer_class = InventoryMovementSerializer
     permission_classes = [WarehouseManagerPermissions]
 
-# Supplier Views
+
 class SupplierListCreate(generics.ListCreateAPIView):
     queryset = Supplier.objects.all()
     serializer_class = SupplierSerializer
@@ -279,7 +277,6 @@ class ExpensesListCreate(generics.ListCreateAPIView):
     permission_classes = [WarehouseManagerPermissions]
 
     def perform_create(self, serializer):
-        # Asocia automáticamente el usuario autenticado con la orden
         serializer.save(user=self.request.user)
 
 class ExpensesUpdate(generics.RetrieveUpdateAPIView):

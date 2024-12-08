@@ -5,7 +5,6 @@ import { Formik, Field, Form as FormikForm, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import "../styles/formSuppliers.css";
 
-// Esquema de validación con Yup
 const validationSchema = Yup.object({
   supplierName: Yup.string().required("El nombre del proveedor es obligatorio"),
   contactPerson: Yup.string(),

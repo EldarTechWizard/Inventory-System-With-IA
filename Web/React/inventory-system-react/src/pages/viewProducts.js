@@ -16,36 +16,12 @@ import SearchIcon from "@mui/icons-material/Search";
 const columns = [
   { id: "product_id", label: "Id", minWidth: 100 },
   { id: "product_name", label: "Nombre", minWidth: 170 },
-  {
-    id: "barcode",
-    label: "Codigo de barras",
-    minWidth: 170,
-  },
-  {
-    id: "unit_price",
-    label: "Precio de compra",
-    minWidth: 170,
-  },
-  {
-    id: "units_in_stock",
-    label: "Unidades en stock",
-    minWidth: 170,
-  },
-  {
-    id: "expiration_date",
-    label: "Fecha de expiracion",
-    minWidth: 170,
-  },
-  {
-    id: "category_name",
-    label: "Categoria",
-    minWidth: 170,
-  },
-  {
-    id: "supplier_name",
-    label: "Proveedor",
-    minWidth: 170,
-  },
+  { id: "barcode", label: "Codigo de barras", minWidth: 170 },
+  { id: "unit_price", label: "Precio de compra", minWidth: 170 },
+  { id: "units_in_stock", label: "Unidades en stock", minWidth: 170 },
+  { id: "expiration_date", label: "Fecha de expiracion", minWidth: 170 },
+  { id: "category_name", label: "Categoria", minWidth: 170 },
+  { id: "supplier_name", label: "Proveedor", minWidth: 170 },
 ];
 
 function ViewProducts() {

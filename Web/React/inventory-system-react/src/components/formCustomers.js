@@ -36,10 +36,9 @@ function ModalFormCustomers({ getData, customer, LabelButton }) {
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     const sanitizedData = {
       ...values,
-      phone: values.phone.replace(/-/g, ""), // Elimina los guiones del número de teléfono
+      phone: values.phone.replace(/-/g, ""),
     };
 
-    console.log(sanitizedData);
     try {
       if (customer) {
         await updateData(`/customers/${customer.customer_id}/`, sanitizedData);
