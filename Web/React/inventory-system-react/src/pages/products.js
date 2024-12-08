@@ -13,7 +13,7 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import ModalFormCategory from "../components/formCategories";
-
+import { useNotifications } from "../context/notificationContext";
 const columns = [
   { id: "product_id", label: "Id", minWidth: 100 },
   { id: "product_name", label: "Nombre", minWidth: 170 },
@@ -69,11 +69,19 @@ function Products() {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
   const [filteredData, setFilteredData] = useState([]);
+  const {
+    reloadMinimumStockProducts,
+    reloadExpiredProducts,
+    reloadApproachingExpiryProducts,
+  } = useNotifications();
 
   const getData = async () => {
     const result = await fetchData("/products");
     setProducts(result);
     setFilteredData(result);
+    reloadApproachingExpiryProducts();
+    reloadExpiredProducts();
+    reloadMinimumStockProducts();
   };
   useEffect(() => {
     getData();

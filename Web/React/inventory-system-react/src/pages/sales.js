@@ -9,6 +9,7 @@ import { fetchData, postData } from "../hooks/apiManager";
 import DeleteIcon from "@mui/icons-material/Delete";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import LocalSeeIcon from "@mui/icons-material/LocalSee";
+import { useNotifications } from "../context/notificationContext";
 
 function Sales() {
   const [cart, setCart] = useState([]);
@@ -23,11 +24,13 @@ function Sales() {
   const [barcode, setBarcode] = useState(null);
   const [error, setError] = useState("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const { reloadMinimumStockProducts } = useNotifications();
 
   const handleConfirmModalClose = () => {
     setShowConfirmModal(false);
     setError("");
-  }; // Cierra el modal de confirmación
+  };
+
   const handleConfirmModalShow = () => {
     if (cart.length === 0) {
       return;
@@ -153,6 +156,7 @@ function Sales() {
       );
 
       setCart([]);
+      reloadMinimumStockProducts();
     }
 
     handleConfirmModalClose();

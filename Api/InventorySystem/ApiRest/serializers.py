@@ -17,13 +17,8 @@ from django.contrib.auth.models import Group
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
-        # Validación y generación del token
         data = super().validate(attrs)
-
-        # Obtener el token y el usuario
         refresh = self.get_token(self.user)
-
-        # Agregar información adicional al token
         data['refresh'] = str(refresh)
         data['access'] = str(refresh.access_token)
         data['groups'] = [group.name for group in self.user.groups.all()]

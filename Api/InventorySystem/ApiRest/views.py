@@ -171,18 +171,18 @@ class LessSellingProductsListView(generics.ListAPIView):
             order_details = order_details.filter(order__order_date__lte=parse_date(end_date))
 
         # Obtener los productos más vendidos
-        most_sold = order_details.values('product')\
+        less_sold = order_details.values('product')\
             .annotate(total_quantity_sold=Sum('quantity'))\
             .order_by('total_quantity_sold')[:3]
 
-        most_sold_data = []
+        less_sold_data = []
 
-        for entry in most_sold:
+        for entry in less_sold:
             product = Product.objects.get(product_id=entry['product'])
             total_sold = entry['total_quantity_sold']
             total = total_sold * product.unit_price if product.unit_price else 0
 
-            most_sold_data.append({
+            less_sold_data.append({
                 'product_id': product.product_id,
                 'product_name': product.product_name,
                 'category': product.category.category_name if product.category else 'N/A',
@@ -190,7 +190,7 @@ class LessSellingProductsListView(generics.ListAPIView):
                 'total': total
             })
 
-        return most_sold_data
+        return less_sold_data
 
 
 
@@ -199,11 +199,9 @@ class TopSellingProductsListView(generics.ListAPIView):
     serializer_class = TopSellingProductSerializer
 
     def get_queryset(self):
-        # Obtener los parámetros de filtro de fecha desde la solicitud
         start_date = self.request.query_params.get('start_date')
         end_date = self.request.query_params.get('end_date')
 
-        # Filtrar los detalles de pedidos en el rango de fechas proporcionado
         order_details = Order_detail.objects.all()
 
         if start_date:
@@ -211,7 +209,6 @@ class TopSellingProductsListView(generics.ListAPIView):
         if end_date:
             order_details = order_details.filter(order__order_date__lte=parse_date(end_date))
 
-        # Obtener los productos más vendidos
         most_sold = order_details.values('product')\
             .annotate(total_quantity_sold=Sum('quantity'))\
             .order_by('-total_quantity_sold')[:3]

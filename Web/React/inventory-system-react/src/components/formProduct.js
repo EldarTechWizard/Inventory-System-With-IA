@@ -80,7 +80,7 @@ function ModalFormProduct({ getData, product, LabelButton }) {
       sell_price: values.sellPrice,
       minimum_stock_level: Number(values.minimumStockLevel),
       units_in_stock: Number(values.unitsInStock),
-      expiration_date: values.expirationDate.format("YYYY-MM-DD"),
+      expiration_date: expirationDate.format("YYYY-MM-DD"),
       category: Number(values.categoryId),
       supplier: Number(values.supplier_id),
     };
@@ -325,7 +325,7 @@ function ModalFormProduct({ getData, product, LabelButton }) {
                       <Form.Label>Fecha de Caducidad</Form.Label>
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <StaticDatePicker
-                          value={values.expirationDate}
+                          value={expirationDate}
                           onChange={(e) => setExpirationDate(e)}
                           slotProps={{
                             actionBar: {

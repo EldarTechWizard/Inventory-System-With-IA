@@ -1,121 +1,23 @@
-import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import "./header.css";
+import React, { useState } from "react";
+import { useNotifications } from "../context/notificationContext";
+import { Badge, IconButton, Menu, MenuItem, Typography } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import ErrorIcon from "@mui/icons-material/Error";
 import InfoIcon from "@mui/icons-material/Info";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import {
-  Menu,
-  MenuItem,
-  Button,
-  Typography,
-  Badge,
-  IconButton,
-} from "@mui/material";
-import { fetchData } from "../hooks/apiManager";
+import { useLocation } from "react-router-dom";
+import "./header.css";
 
 function Header() {
-  const [notifications, setNotifications] = useState([]);
+  const { notifications, removeNotification } = useNotifications();
   const [anchorEl, setAnchorEl] = useState(null);
-  const [notificationCount, setNotificationCount] = useState(0);
-
-  const [productsMinimumStock, setProductsMinimumStock] = useState([]);
-  const [productsAproachingExpiry, setProductsAproachingExpiry] = useState([]);
-  const [productsExpired, setProductsExpired] = useState([]);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  // Cerrar el menú de notificaciones
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  // Añadir una notificación
-  const addNotification = (message, type, uniqueKey) => {
-    setNotifications((prevNotifications) => {
-      // Verificar si ya existe una notificación con el mismo uniqueKey
-      const exists = prevNotifications.some(
-        (notif) => notif.uniqueKey === uniqueKey
-      );
-      if (exists) return prevNotifications; // No añadir duplicados
-      return [...prevNotifications, { message, type, uniqueKey }];
-    });
-  };
-
-  const removeNotification = (index) => {
-    setNotifications((prevNotifications) =>
-      prevNotifications.filter((_, i) => i !== index)
-    );
-  };
-
-  const handleStockAlert = (product) => {
-    addNotification(
-      `El producto '${product.product_name}' tiene solo ${product.units_in_stock} unidades en inventario. Considere reabastecerlo pronto.`,
-      "warning",
-      `stock-${product.product_id}` // Identificador único basado en el producto
-    );
-  };
-
-  const handleAproachingExpiryAlert = (product) => {
-    addNotification(
-      `El producto '${product.product_name}' caduca el ${product.expiration_date}. Considere priorizar su venta o consumo.`,
-      "warning",
-      `approaching-${product.product_id}` // Identificador único basado en el producto
-    );
-  };
-
-  const handleExpiredAlert = (product) => {
-    addNotification(
-      `El producto '${product.product_name}' ha caducado el ${product.expiration_date}. Retíralo del inventario lo antes posible para evitar inconvenientes.`,
-      "error",
-      `expired-${product.product_id}` // Identificador único basado en el producto
-    );
-  };
-
-  const getMinimumStockProducts = async () => {
-    setProductsMinimumStock(await fetchData("/products/need-stock/"));
-  };
-
-  const getAproachingExpiredProducts = async () => {
-    setProductsAproachingExpiry(
-      await fetchData("/products/approaching-expiration/")
-    );
-  };
-
-  const getExpiredProducts = async () => {
-    setProductsExpired(await fetchData("/products/expired/"));
-  };
-
-  useEffect(() => {
-    getMinimumStockProducts();
-    getAproachingExpiredProducts();
-    getExpiredProducts();
-  }, []);
-
-  useEffect(() => {
-    setNotificationCount(notifications.length);
-  }, [notifications.length]);
-
-  useEffect(() => {
-    if (productsMinimumStock) {
-      productsMinimumStock.map((p) => handleStockAlert(p));
-    }
-  }, [productsMinimumStock]);
-
-  useEffect(() => {
-    if (productsAproachingExpiry) {
-      productsAproachingExpiry.map((p) => handleAproachingExpiryAlert(p));
-    }
-  }, [productsAproachingExpiry]);
-
-  useEffect(() => {
-    if (productsExpired) {
-      productsExpired.map((p) => handleExpiredAlert(p));
-    }
-  }, [productsExpired]);
 
   const location = useLocation();
   const pathname =
@@ -126,7 +28,7 @@ function Header() {
       <h6>Pages / {pathname}</h6>
       <IconButton onClick={handleClick}>
         <Badge
-          badgeContent={notificationCount > 0 ? notificationCount : null}
+          badgeContent={notifications.length > 0 ? notifications.length : null}
           color="error"
         >
           <NotificationsIcon />
@@ -148,7 +50,7 @@ function Header() {
                 style={{
                   backgroundColor:
                     notif.type === "error" ? "#C34A43" : "#F99E1E",
-                  color: notif.type === "error" ? "white" : "white",
+                  color: "white",
                 }}
                 className="notification-item d-flex align-items-center"
               >

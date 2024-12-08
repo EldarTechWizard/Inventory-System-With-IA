@@ -11,6 +11,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
+import { useNotifications } from "../context/notificationContext";
 
 const columns = [
   { id: "movement_id", label: "Id", minWidth: 170 },
@@ -47,9 +48,11 @@ function InventoryMovement() {
   const [inventoryMovements, setInventoryMovements] = useState([]);
   const [search, setSearch] = useState("");
   const [filteredData, setFilteredData] = useState([]);
+  const { reloadMinimumStockProducts } = useNotifications();
 
   const getData = async () => {
     const result = await fetchData("/inventory-movements");
+    reloadMinimumStockProducts();
     setInventoryMovements(result);
     setFilteredData(result);
   };

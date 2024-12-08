@@ -185,13 +185,13 @@ function ModalSalesReport({ startDate, endDate }) {
       ["Total", totalFormatted],
     ]);
   };
+
   useEffect(() => {
     getData();
     getExpenses();
-  }, []); // Solo depende de las fechas
+  }, []);
 
   useEffect(() => {
-    // Generar el PDF solo si `data` y `total` están completamente establecidos
     if (data && total && expenses) {
       const gains = sellTotal - expensesTotal;
       setGains([
