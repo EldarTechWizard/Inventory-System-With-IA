@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
 import { Button, Modal, Form } from "react-bootstrap";
@@ -10,6 +10,49 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import LocalSeeIcon from "@mui/icons-material/LocalSee";
 import { useNotifications } from "../context/notificationContext";
+
+const BarcodeScanner = ({ onBarcodeScanned }) => {
+  const [barcode, setBarcode] = useState("");
+  const [isReading, setIsReading] = useState(false);
+
+  const invisibleInputRef = useRef(null);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (!isReading) {
+        setIsReading(true);
+        setBarcode("");
+      }
+      if (event.key === "Enter") {
+        onBarcodeScanned(barcode);
+        setIsReading(false);
+      } else if (!isNaN(event.key) || /^[a-zA-Z0-9\-]+$/.test(event.key)) {
+        setBarcode((prev) => prev + event.key);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [barcode, isReading]);
+
+  return (
+    <div>
+      <input
+        ref={invisibleInputRef}
+        type="text"
+        value={barcode}
+        onChange={() => {}}
+        style={{
+          position: "absolute",
+          left: "-9999px", // Mantenerlo fuera de la pantalla
+        }}
+      />
+    </div>
+  );
+};
 
 function Sales() {
   const [cart, setCart] = useState([]);
@@ -162,8 +205,8 @@ function Sales() {
     handleConfirmModalClose();
   };
 
-  const handleSearchProduct = async () => {
-    const result = await fetchData(`products/?barcode=${barcode}`);
+  const handleSearchProduct = async (barcode1) => {
+    const result = await fetchData(`products/?barcode=${barcode1}`);
 
     if (result.length) {
       addToCart({
@@ -343,6 +386,7 @@ function Sales() {
             <Button variant="danger" onClick={handleDelete}>
               <DeleteIcon />
             </Button>
+            <BarcodeScanner onBarcodeScanned={handleSearchProduct} />
           </div>
 
           <div className="controls d-flex gap-2  justify-content-end">
@@ -368,6 +412,7 @@ function Sales() {
                 </div>
               </Modal.Body>
             </Modal>
+
             <Button
               onClick={handleShow}
               className="align-items-center d-flex gap-2 colorDarkBlue text-nowrap"

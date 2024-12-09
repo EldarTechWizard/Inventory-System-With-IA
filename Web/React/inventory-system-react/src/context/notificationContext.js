@@ -121,7 +121,6 @@ export const NotificationProvider = ({ children }) => {
     setProductsExpired(await fetchData("/products/expired/"));
   };
 
-  // Efectos para cargar productos y generar notificaciones
   useEffect(() => {
     getMinimumStockProducts();
     getAproachingExpiredProducts();

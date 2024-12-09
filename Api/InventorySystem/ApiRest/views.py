@@ -75,7 +75,6 @@ class ProductBelowMinimumStockView(generics.ListAPIView):
     serializer_class = ProductSerializer
 
     def get_queryset(self):
-        # Filtrar productos cuyo nivel de stock esté por debajo del mínimo
         return Product.objects.filter(units_in_stock__lt=F('minimum_stock_level'), is_active=True)
 
 
@@ -85,7 +84,6 @@ class ProductApproachingExpirationView(generics.ListAPIView):
     def get_queryset(self):
 
         today = timezone.now().date()
-
 
         expiration_threshold = today + timedelta(days=7)
 
@@ -99,15 +97,14 @@ class ExpiredProductsView(generics.ListAPIView):
     serializer_class = ProductSerializer
 
     def get_queryset(self):
-        # Fecha actual
-        today = timezone.now().date()
 
-        # Filtrar productos cuya fecha de caducidad ya pasó
+        today = timezone.now().date()
         return Product.objects.filter(
-            expiration_date__lt=today,  # Caducaron antes de hoy
-            is_active=True             # Productos activos
+            expiration_date__lt=today,
+            is_active=True
         )
-# Category Views
+
+
 class CategoryListCreate(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
