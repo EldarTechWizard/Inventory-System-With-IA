@@ -3,6 +3,7 @@ from django.dispatch import receiver
 from .models import InventoryMovement, Product, Order_detail
 
 
+
 @receiver(pre_save, sender=InventoryMovement)
 def adjust_product_stock_before_update(sender, instance, **kwargs):
     if not instance.pk:
@@ -54,3 +55,5 @@ def insert_inventory_movement(sender, instance, created,**kwargs):
             remarks=f"Orden {instance.order.order_id} creada",
             user=instance.order.user,
         )
+
+

@@ -12,7 +12,7 @@ function ModalFormExpenses({ getData, expense, LabelButton }) {
 
   const initialValues = {
     description: expense?.description || "",
-    paymentMethod: expense?.payment_method || "",
+    paymentMethod: "Efectivo",
     amount: expense?.amount || "",
   };
 
@@ -20,9 +20,10 @@ function ModalFormExpenses({ getData, expense, LabelButton }) {
     description: Yup.string()
       .required("La descripción es obligatoria.")
       .max(100, "La descripción no puede superar los 100 caracteres."),
-    paymentMethod: Yup.string()
-      .required("El método de pago es obligatorio.")
-      .max(50, "El método de pago no puede superar los 50 caracteres."),
+    paymentMethod: Yup.string().max(
+      50,
+      "El método de pago no puede superar los 50 caracteres."
+    ),
     amount: Yup.number()
       .required("El monto es obligatorio.")
       .min(0.01, "El monto debe ser mayor a 0."),
@@ -31,7 +32,7 @@ function ModalFormExpenses({ getData, expense, LabelButton }) {
   const handleSubmit = async (values, { resetForm }) => {
     const data = {
       description: values.description,
-      payment_method: values.paymentMethod,
+      payment_method: "Efectivo",
       amount: Number(values.amount),
     };
 
@@ -97,7 +98,9 @@ function ModalFormExpenses({ getData, expense, LabelButton }) {
                     type="text"
                     name="paymentMethod"
                     className="form-control"
+                    value="Efectivo"
                     placeholder="Ingrese el método de pago"
+                    readOnly
                   />
                   <ErrorMessage
                     name="paymentMethod"

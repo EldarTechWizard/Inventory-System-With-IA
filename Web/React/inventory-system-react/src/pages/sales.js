@@ -173,36 +173,40 @@ function Sales() {
   };
 
   const handleConfirm = async () => {
-    if (!selectedCustomer) {
-      setError("Debe seleccionar un cliente antes de confirmar la compra.");
-      return;
+    try {
+      if (!selectedCustomer) {
+        setError("Debe seleccionar un cliente antes de confirmar la compra.");
+        return;
+      }
+
+      const order = {
+        customers: selectedCustomer,
+        total_amount: String(total.toFixed(2)),
+      };
+
+      const result = await postData("/orders/", order);
+
+      if (result) {
+        const order_details = cart.map((item) => ({
+          product: item.id,
+          quantity: item.quantity,
+          order: result.order_id,
+          unit_price: String(item.sell_price),
+        }));
+
+        const resultOrderDetails = await postData(
+          "/order-details/post-list/",
+          order_details
+        );
+
+        setCart([]);
+        reloadMinimumStockProducts();
+      }
+
+      handleConfirmModalClose();
+    } catch (err) {
+      console.log(err);
     }
-
-    const order = {
-      customers: selectedCustomer,
-      total_amount: String(total.toFixed(2)),
-    };
-
-    const result = await postData("/orders/", order);
-
-    if (result) {
-      const order_details = cart.map((item) => ({
-        product: item.id,
-        quantity: item.quantity,
-        order: result.order_id,
-        unit_price: String(item.sell_price),
-      }));
-
-      const resultOrderDetails = await postData(
-        "/order-details/post-list/",
-        order_details
-      );
-
-      setCart([]);
-      reloadMinimumStockProducts();
-    }
-
-    handleConfirmModalClose();
   };
 
   const handleSearchProduct = async (barcode1) => {

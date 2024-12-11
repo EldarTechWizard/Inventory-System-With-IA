@@ -46,6 +46,8 @@ const columns = [
 function Suppliers() {
   const [suppliers, setSuppliers] = useState([]);
   const [search, setSearch] = useState("");
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [filteredData, setFilteredData] = useState([]);
 
   const getData = async () => {
@@ -58,14 +60,12 @@ function Suppliers() {
     getData();
   }, []);
 
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
   const handleFilter = () => {
     const filtered = suppliers.filter((item) =>
       item.supplier_name.toLowerCase().includes(search.toLowerCase())
     );
     setFilteredData(filtered);
+    setPage(0);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -159,7 +159,7 @@ function Suppliers() {
         <TablePagination
           rowsPerPageOptions={[10]}
           component="div"
-          count={suppliers.length}
+          count={filteredData.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

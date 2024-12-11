@@ -40,7 +40,7 @@ function ModalFormSupplier({ getData, supplier, LabelButton }) {
     }
   }, [supplier]);
 
-  async function handleSubmit(values) {
+  async function handleSubmit(values, { setErrors }) {
     const data = {
       supplier_name: values.supplierName,
       contact_person: values.contactPerson,
@@ -60,7 +60,10 @@ function ModalFormSupplier({ getData, supplier, LabelButton }) {
       await getData();
       handleClose();
     } catch (err) {
-      console.error("Error:", err.message);
+      setErrors({
+        email: err.email ? err.email[0] : null,
+        phone: err.phone ? err.phone[0] : null,
+      });
     }
   }
 

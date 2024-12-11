@@ -23,7 +23,7 @@ function ModalInventoryReport({ startDate, endDate }) {
 
     // Datos de la tabla principal
     const columns = [
-      { header: "Producto", dataKey: "product" },
+      { header: "Producto", dataKey: "product_name" },
       { header: "Tipo de Movimiento", dataKey: "movement_type" },
       { header: "Fecha", dataKey: "movement_date" },
       { header: "Responsable", dataKey: "user" },

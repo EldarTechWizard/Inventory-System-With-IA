@@ -38,6 +38,8 @@ function Expenses() {
   const [expenses, setExpenses] = useState([]);
   const [search, setSearch] = useState("");
   const [filteredData, setFilteredData] = useState([]);
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   const getData = async () => {
     const result = await fetchData("/expenses");
@@ -49,14 +51,12 @@ function Expenses() {
     getData();
   }, []);
 
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
   const handleFilter = () => {
     const filtered = expenses.filter((item) =>
       item.description.toLowerCase().includes(search.toLowerCase())
     );
     setFilteredData(filtered);
+    setPage(0);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -153,7 +153,7 @@ function Expenses() {
         <TablePagination
           rowsPerPageOptions={[10]}
           component="div"
-          count={expenses.length}
+          count={filteredData.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

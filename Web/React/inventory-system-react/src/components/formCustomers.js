@@ -33,7 +33,10 @@ function ModalFormCustomers({ getData, customer, LabelButton }) {
     address: customer?.address || "",
   };
 
-  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+  const handleSubmit = async (
+    values,
+    { setSubmitting, resetForm, setErrors }
+  ) => {
     const sanitizedData = {
       ...values,
       phone: values.phone.replace(/-/g, ""),
@@ -49,7 +52,10 @@ function ModalFormCustomers({ getData, customer, LabelButton }) {
       resetForm();
       handleClose();
     } catch (err) {
-      console.error("Error:", err.message);
+      setErrors({
+        email: err.email ? err.email[0] : null,
+        phone: err.phone ? err.phone[0] : null,
+      });
     } finally {
       setSubmitting(false);
     }
@@ -79,8 +85,10 @@ function ModalFormCustomers({ getData, customer, LabelButton }) {
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
           enableReinitialize
+          validateOnChange={true}
+          validateOnBlur={true}
         >
-          {({ isSubmitting }) => (
+          {({ isSubmitting, errors }) => (
             <FormikForm>
               <Modal.Body className="d-flex flex-column w-100 gap-4 p-4">
                 <Form.Group controlId="formCustomerName">

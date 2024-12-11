@@ -71,7 +71,7 @@ function ModalFormProduct({ getData, product, LabelButton }) {
     }
   }, [product]);
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (values, { setErrors }) => {
     const data = {
       product_name: values.productName,
       barcode: values.barcode,
@@ -96,6 +96,9 @@ function ModalFormProduct({ getData, product, LabelButton }) {
       handleClose();
     } catch (err) {
       console.error("Error:", err.message);
+      setErrors({
+        barcode: err.barcode ? err.barcode[0] : null,
+      });
     }
   };
 

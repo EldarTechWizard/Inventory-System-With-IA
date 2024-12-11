@@ -1,5 +1,5 @@
 from rest_framework.views import APIView
-from django.contrib.auth.models import User, Group
+from rest_framework import serializers
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics,status
 from rest_framework.permissions import IsAuthenticated
@@ -136,7 +136,8 @@ class OrderListCreate(generics.ListCreateAPIView):
     filterset_class = OrderFilter
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        if serializer.is_valid():
+            serializer.save(user=self.request.user)
 
 
 class OrderUpdate(generics.RetrieveUpdateAPIView):
@@ -150,6 +151,70 @@ class OrderDetailListCreate(generics.ListAPIView):
     serializer_class = OrderDetailSerializer
     permission_classes = [EmployeePermissions]
 
+    def perform_create(self, serializer):
+        if serializer.is_valid():
+            serializer.save()
+
+
+class OrderDetailPostList(generics.CreateAPIView):
+    queryset = Order_detail.objects.all()
+    serializer_class = OrderListSerializer
+    permission_classes = [EmployeePermissions]
+
+    def perform_create(self, serializer):
+        if serializer.is_valid():  # Verifica si los datos son válidos
+            serializer.save()  # Guarda los datos solo si son válidos
+        else:
+            raise serializers.ValidationError(serializer.errors) 
+
+class OrderDetailUpdate(generics.RetrieveUpdateAPIView):
+    queryset = Order_detail.objects.all()
+    serializer_class = OrderDetailSerializer
+    permission_classes = [EmployeePermissions]
+
+    def perform_create(self, serializer):
+        if serializer.is_valid():
+            serializer.save()
+
+
+class InventoryMovementListCreate(generics.ListCreateAPIView):
+    queryset = InventoryMovement.objects.all()
+    serializer_class = InventoryMovementSerializer
+    permission_classes = [WarehouseManagerPermissions]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = InventoryMovementFilter
+
+
+
+class InventoryMovementUpdate(generics.RetrieveUpdateAPIView):
+    queryset = InventoryMovement.objects.all()
+    serializer_class = InventoryMovementSerializer
+    permission_classes = [WarehouseManagerPermissions]
+
+
+class SupplierListCreate(generics.ListCreateAPIView):
+    queryset = Supplier.objects.all()
+    serializer_class = SupplierSerializer
+    permission_classes = [WarehouseManagerPermissions]
+
+
+class SupplierUpdate(generics.RetrieveUpdateAPIView):
+    queryset = Supplier.objects.all()
+    serializer_class = SupplierSerializer
+    permission_classes = [WarehouseManagerPermissions]
+
+class ExpensesListCreate(generics.ListCreateAPIView):
+    queryset = Expenses.objects.all()
+    serializer_class = ExpensesSerializer
+    permission_classes = [WarehouseManagerPermissions]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class ExpensesUpdate(generics.RetrieveUpdateAPIView):
+    queryset = Expenses.objects.all()
+    serializer_class = ExpensesSerializer
+    permission_classes = [WarehouseManagerPermissions]
 
 class LessSellingProductsListView(generics.ListAPIView):
     serializer_class = TopSellingProductSerializer
@@ -226,54 +291,3 @@ class TopSellingProductsListView(generics.ListAPIView):
             })
 
         return most_sold_data
-
-
-class OrderDetailPostList(generics.CreateAPIView):
-    queryset = Order_detail.objects.all()
-    serializer_class = OrderListSerializer
-    permission_classes = [EmployeePermissions]
-
-class OrderDetailUpdate(generics.RetrieveUpdateAPIView):
-    queryset = Order_detail.objects.all()
-    serializer_class = OrderDetailSerializer
-    permission_classes = [EmployeePermissions]
-
-
-class InventoryMovementListCreate(generics.ListCreateAPIView):
-    queryset = InventoryMovement.objects.all()
-    serializer_class = InventoryMovementSerializer
-    permission_classes = [WarehouseManagerPermissions]
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = InventoryMovementFilter
-
-
-
-class InventoryMovementUpdate(generics.RetrieveUpdateAPIView):
-    queryset = InventoryMovement.objects.all()
-    serializer_class = InventoryMovementSerializer
-    permission_classes = [WarehouseManagerPermissions]
-
-
-class SupplierListCreate(generics.ListCreateAPIView):
-    queryset = Supplier.objects.all()
-    serializer_class = SupplierSerializer
-    permission_classes = [WarehouseManagerPermissions]
-
-
-class SupplierUpdate(generics.RetrieveUpdateAPIView):
-    queryset = Supplier.objects.all()
-    serializer_class = SupplierSerializer
-    permission_classes = [WarehouseManagerPermissions]
-
-class ExpensesListCreate(generics.ListCreateAPIView):
-    queryset = Expenses.objects.all()
-    serializer_class = ExpensesSerializer
-    permission_classes = [WarehouseManagerPermissions]
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
-class ExpensesUpdate(generics.RetrieveUpdateAPIView):
-    queryset = Expenses.objects.all()
-    serializer_class = ExpensesSerializer
-    permission_classes = [WarehouseManagerPermissions]

@@ -38,6 +38,8 @@ function Customers() {
   const [customers, setCustomers] = useState([]);
   const [search, setSearch] = useState("");
   const [filteredData, setFilteredData] = useState([]);
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   const getData = async () => {
     const result = await fetchData("/customers");
@@ -49,14 +51,12 @@ function Customers() {
     getData();
   }, []);
 
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
   const handleFilter = () => {
     const filtered = customers.filter((item) =>
       item.name.toLowerCase().includes(search.toLowerCase())
     );
     setFilteredData(filtered);
+    setPage(0);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -153,7 +153,7 @@ function Customers() {
         <TablePagination
           rowsPerPageOptions={[10]}
           component="div"
-          count={Customers.length}
+          count={filteredData.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

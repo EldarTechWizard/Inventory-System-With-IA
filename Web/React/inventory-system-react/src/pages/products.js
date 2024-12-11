@@ -69,6 +69,9 @@ function Products() {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
   const [filteredData, setFilteredData] = useState([]);
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
   const {
     reloadMinimumStockProducts,
     reloadExpiredProducts,
@@ -87,14 +90,12 @@ function Products() {
     getData();
   }, []);
 
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
   const handleFilter = () => {
     const filtered = products.filter((item) =>
       item.product_name.toLowerCase().includes(search.toLowerCase())
     );
     setFilteredData(filtered);
+    setPage(0);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -193,7 +194,7 @@ function Products() {
         <TablePagination
           rowsPerPageOptions={[10]}
           component="div"
-          count={products.length}
+          count={filteredData.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

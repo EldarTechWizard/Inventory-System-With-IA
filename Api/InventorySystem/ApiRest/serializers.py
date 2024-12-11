@@ -44,16 +44,46 @@ class CategorySerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source="category.category_name",read_only=True)
     supplier_name = serializers.CharField(source="supplier.supplier_name",read_only=True)
+
     class Meta:
         model = Product
         fields = '__all__'
         read_only_field = ["registration_date",]
 
+    def create(self, validated_data):
 
+        user = self.context['request'].user
+
+        product = Product.objects.create(**validated_data)
+
+        InventoryMovement.objects.create(
+            product=product,
+            movement_type='IN',
+            quantity=product.units_in_stock,
+            remarks='Registro automatico en la creacion de un producto',
+            user=user
+        )
+        return product
+
+    def validate_barcode(self, value):
+        if Product.objects.filter(barcode=value).exists():
+            raise serializers.ValidationError('Este codigo de barras ya está en uso.')
+        return value
+    
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = '__all__'
+
+    def validate_email(self, value):
+        if Customer.objects.filter(email=value).exists():
+            raise serializers.ValidationError('Este correo ya está en uso.')
+        return value
+
+    def validate_phone(self, value):
+        if value and Customer.objects.filter(phone=value).exists():
+            raise serializers.ValidationError('Este número de teléfono ya está en uso.')
+        return value
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -68,13 +98,25 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class OrderDetailSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Order_detail
-        fields = '__all__'
+        fields = ['product', 'quantity', 'unit_price']
+
 
 class OrderListSerializer(serializers.ListSerializer):
     child = OrderDetailSerializer()
 
+    def validate(self, data):
+        print(data)
+        for item in data:
+            product = item['product']
+            if item['quantity'] > product.units_in_stock:
+                raise serializers.ValidationError(
+                    f"La cantidad solicitada para el producto {item['product']} excede el stock disponible."
+                )
+        return data
+    
 class InventoryMovementSerializer(serializers.ModelSerializer):
     user = serializers.CharField(source='user.username', read_only=True)
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
@@ -97,6 +139,15 @@ class SupplierSerializer(serializers.ModelSerializer):
         model = Supplier
         fields = '__all__'
 
+    def validate_email(self, value):
+        if Customer.objects.filter(email=value).exists():
+            raise serializers.ValidationError('Este correo ya está en uso.')
+        return value
+
+    def validate_phone(self, value):
+        if value and Customer.objects.filter(phone=value).exists():
+            raise serializers.ValidationError('Este número de teléfono ya está en uso.')
+        return value
 
 class TopSellingProductSerializer(serializers.Serializer):
     product_id = serializers.IntegerField()

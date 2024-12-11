@@ -197,7 +197,7 @@ function ModalSalesReport({ startDate, endDate }) {
       setGains([
         ["Vendido", `$${sellTotal}`],
         ["Gastos", `$${expensesTotal}`],
-        ["Total", `$${gains}`],
+        ["Total", `$${gains.toFixed(2)}`],
       ]);
 
       generatePDF();
