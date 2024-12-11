@@ -76,12 +76,17 @@ class CustomerSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate_email(self, value):
-        if Customer.objects.filter(email=value).exists():
+        request = self.context.get('request')
+        customer_id = self.instance.customer_id if self.instance else None
+
+        if Customer.objects.filter(email=value).exclude(customer_id=customer_id).exists():
             raise serializers.ValidationError('Este correo ya está en uso.')
         return value
 
     def validate_phone(self, value):
-        if value and Customer.objects.filter(phone=value).exists():
+        request = self.context.get('request')
+        customer_id = self.instance.customer_id if self.instance else None
+        if Customer.objects.filter(phone=value).exclude(customer_id=customer_id).exists():
             raise serializers.ValidationError('Este número de teléfono ya está en uso.')
         return value
 
@@ -148,12 +153,18 @@ class SupplierSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate_email(self, value):
-        if Customer.objects.filter(email=value).exists():
+        request = self.context.get('request')
+        supplier_id = self.instance.supplier_id if self.instance else None
+
+        if Supplier.objects.filter(email=value).exclude(supplier_id=supplier_id).exists():
             raise serializers.ValidationError('Este correo ya está en uso.')
         return value
 
     def validate_phone(self, value):
-        if value and Customer.objects.filter(phone=value).exists():
+        request = self.context.get('request')
+        supplier_id = self.instance.supplier_id if self.instance else None
+
+        if Supplier.objects.filter(phone=value).exclude(supplier_id=supplier_id).exists():
             raise serializers.ValidationError('Este número de teléfono ya está en uso.')
         return value
 

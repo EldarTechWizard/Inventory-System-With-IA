@@ -195,8 +195,8 @@ function ModalSalesReport({ startDate, endDate }) {
     if (data && total && expenses) {
       const gains = sellTotal - expensesTotal;
       setGains([
-        ["Vendido", `$${sellTotal}`],
-        ["Gastos", `$${expensesTotal}`],
+        ["Vendido", `$${sellTotal.toFixed(2)}`],
+        ["Gastos", `$${expensesTotal.toFixed(2)}`],
         ["Total", `$${gains.toFixed(2)}`],
       ]);
 
