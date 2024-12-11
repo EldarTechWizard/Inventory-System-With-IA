@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.utils import timezone
 from datetime import timedelta
 from .permissions import ManagerPermissions,EmployeePermissions,WarehouseManagerPermissions
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from .filters import (InventoryMovementFilter,OrderFilter,ProductFilter)
 from rest_framework.exceptions import PermissionDenied
@@ -28,7 +29,6 @@ from .serializers import (
     CustomerSerializer,
     OrderSerializer,
     OrderDetailSerializer,
-    OrderListSerializer,
     InventoryMovementSerializer,
     SupplierSerializer,
     CustomTokenObtainPairSerializer,
@@ -136,8 +136,10 @@ class OrderListCreate(generics.ListCreateAPIView):
     filterset_class = OrderFilter
 
     def perform_create(self, serializer):
-        if serializer.is_valid():
-            serializer.save(user=self.request.user)
+        validated_data = serializer.validated_data
+
+        with transaction.atomic():
+            order = serializer.save(user=self.request.user)
 
 
 class OrderUpdate(generics.RetrieveUpdateAPIView):
@@ -156,16 +158,6 @@ class OrderDetailListCreate(generics.ListAPIView):
             serializer.save()
 
 
-class OrderDetailPostList(generics.CreateAPIView):
-    queryset = Order_detail.objects.all()
-    serializer_class = OrderListSerializer
-    permission_classes = [EmployeePermissions]
-
-    def perform_create(self, serializer):
-        if serializer.is_valid():  # Verifica si los datos son válidos
-            serializer.save()  # Guarda los datos solo si son válidos
-        else:
-            raise serializers.ValidationError(serializer.errors) 
 
 class OrderDetailUpdate(generics.RetrieveUpdateAPIView):
     queryset = Order_detail.objects.all()

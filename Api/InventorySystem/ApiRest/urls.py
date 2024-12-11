@@ -15,7 +15,6 @@ from .views import (
     SupplierListCreate,
     SupplierUpdate,
     ProductListByCategoryView,
-    OrderDetailPostList,
     TopSellingProductsListView,
     LessSellingProductsListView,
     ProductBelowMinimumStockView,
@@ -39,7 +38,6 @@ urlpatterns = [
     path('orders/<int:pk>/', OrderUpdate.as_view(), name='order-update'),
 
     path('order-details/', OrderDetailListCreate.as_view(), name='order-detail-list-create'),
-    path('order-details/post-list/', OrderDetailPostList.as_view(), name='order-detail-post-list'),
     path('order-details/<int:pk>/', OrderDetailUpdate.as_view(), name='order-detail-update'),
 
     path('inventory-movements/', InventoryMovementListCreate.as_view(), name='inventory-movement-list-create'),

@@ -182,23 +182,16 @@ function Sales() {
       const order = {
         customers: selectedCustomer,
         total_amount: String(total.toFixed(2)),
+        order_details: cart.map((item) => ({
+          product: item.id,
+          quantity: item.quantity,
+          unit_price: String(item.sell_price),
+        })),
       };
 
       const result = await postData("/orders/", order);
 
       if (result) {
-        const order_details = cart.map((item) => ({
-          product: item.id,
-          quantity: item.quantity,
-          order: result.order_id,
-          unit_price: String(item.sell_price),
-        }));
-
-        const resultOrderDetails = await postData(
-          "/order-details/post-list/",
-          order_details
-        );
-
         setCart([]);
         reloadMinimumStockProducts();
       }
@@ -206,6 +199,14 @@ function Sales() {
       handleConfirmModalClose();
     } catch (err) {
       console.log(err);
+      if (err.order_details) {
+        const errorMessages = err.order_details
+          .map((detail) => detail.non_field_errors)
+          .join("\n");
+        setError(errorMessages);
+      } else {
+        setError("Hubo un problema al procesar la orden.");
+      }
     }
   };
 
@@ -475,7 +476,14 @@ function Sales() {
                     </option>
                   ))}
                 </select>
-                <p className="m-0 text-danger">{error}</p>
+                <ul className="p-1">
+                  {error &&
+                    error.split("\n").map((msg, index) => (
+                      <li key={index} className="ml-2">
+                        <p className="text-danger m-0">{msg}</p>
+                      </li>
+                    ))}
+                </ul>
               </div>
               ¿Está seguro que desea confirmar la compra por un total de $
               {total.toFixed(2)}?
