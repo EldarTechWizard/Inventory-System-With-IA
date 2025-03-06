@@ -1,6 +1,23 @@
 # Importamos las librerías
+# Importamos las librerías
 from ultralytics import YOLO
 import cv2
+import time
+import tkinter as tk
+from tkinter import messagebox
+from HttpMain import enviar_datos_con_token, obtener_id_por_string
+
+
+ #Configuración de MessageBox
+def show_message(title, message):
+    root = tk.Tk()
+    root.withdraw()
+    messagebox.showinfo(title, message)
+    root.destroy()
+
+
+username = "Admin"
+password = "Response123"
 import time
 import tkinter as tk
 from tkinter import messagebox
@@ -30,10 +47,19 @@ last_seen_time = {}  # Última vez que se vio cada producto
 direction_log = {}  # Última dirección conocida de cada producto (entrada o salida)
 disappear_threshold = 3  # Tiempo de desaparición para confirmar movimiento (en segundos)
 
+# Variables para seguimiento
+width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))  # Ancho de la cámara
+middle_line = width // 2  # Línea divisoria de entrada/salida
+last_seen_time = {}  # Última vez que se vio cada producto
+direction_log = {}  # Última dirección conocida de cada producto (entrada o salida)
+disappear_threshold = 3  # Tiempo de desaparición para confirmar movimiento (en segundos)
+
 # Bucle
 while True:
     # Leer nuestros fotogramas
     ret, frame = cap.read()
+    if not ret:
+        break
     if not ret:
         break
 
@@ -95,9 +121,12 @@ while True:
     cv2.imshow("DETECCION", anotaciones)
 
     # Cerrar el programa al presionar Esc
+    # Cerrar el programa al presionar Esc
     if cv2.waitKey(1) == 27:
         break
 
 # Liberamos el recurso de la cámara y cerramos ventanas
+# Liberamos el recurso de la cámara y cerramos ventanas
 cap.release()
 cv2.destroyAllWindows()
+

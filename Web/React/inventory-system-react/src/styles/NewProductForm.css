@@ -1,0 +1,94 @@
+.new-product-form {
+    width: 100%;
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .form-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  
+  .form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  .form-group input,
+  .form-group select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  .form-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .cancel-button,
+  .clear-button,
+  .add-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .cancel-button {
+    background-color: #f8f9fa;
+    color: #333;
+  }
+  
+  .clear-button {
+    background-color: #f8f9fa;
+    color: #333;
+  }
+  
+  .add-button {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  .add-button:hover {
+    background-color: #0056b3;
+  }
+  
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column;
+    }
+  
+    .form-buttons {
+      flex-direction: column;
+      gap: 10px;
+    }
+  
+    .cancel-button,
+    .clear-button,
+    .add-button {
+      width: 100%;
+    }
+  }
+  
