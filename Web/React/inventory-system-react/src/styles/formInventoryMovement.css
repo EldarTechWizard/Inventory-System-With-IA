@@ -1,0 +1,22 @@
+.textFieldsContainers {
+  width: 40%;
+}
+
+.textFieldsContainers > * {
+  padding-top: 1rem;
+}
+
+.ContainerDatePicker > * {
+  padding-top: 1rem;
+}
+
+.button-modal {
+  height: 100%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+
+.inventory-movement > .modal-dialog{
+  width: 50%;
+}

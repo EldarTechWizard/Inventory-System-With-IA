@@ -14,6 +14,14 @@ from .views import (
     InventoryMovementUpdate,
     SupplierListCreate,
     SupplierUpdate,
+    ProductListByCategoryView,
+    TopSellingProductsListView,
+    LessSellingProductsListView,
+    ProductBelowMinimumStockView,
+    ProductApproachingExpirationView,
+    ExpiredProductsView,
+    ExpensesListCreate,
+    ExpensesUpdate
 )
 
 urlpatterns = [
@@ -37,5 +45,18 @@ urlpatterns = [
 
     path('suppliers/', SupplierListCreate.as_view(), name='supplier-list-create'),
     path('suppliers/<int:pk>/', SupplierUpdate.as_view(), name='supplier-update'),
+
+    path('products/category/<int:category_id>/', ProductListByCategoryView.as_view(), name='product-list-by-category'),
+
+    path('order-details/top-selling/', TopSellingProductsListView.as_view(), name='order-details-top-selling'),
+    path('order-details/less-selling/', LessSellingProductsListView.as_view(), name='order-details-less-selling'),
+
+    path('products/need-stock/', ProductBelowMinimumStockView.as_view(), name='products-need-stock'),
+    path('products/approaching-expiration/', ProductApproachingExpirationView.as_view(), name='products_approaching_expiration'),
+    path('products/expired/', ExpiredProductsView.as_view(), name='expired_products'),
+
+
+    path('expenses/', ExpensesListCreate.as_view(), name='expenses-list-create'),
+    path('expenses/<int:pk>/', ExpensesUpdate.as_view(), name='expenses-update'),
 ]
 

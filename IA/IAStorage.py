@@ -1,4 +1,5 @@
 # Importamos las librerías
+# Importamos las librerías
 from ultralytics import YOLO
 import cv2
 import time
@@ -17,11 +18,34 @@ def show_message(title, message):
 
 username = "Admin"
 password = "Response123"
+import time
+import tkinter as tk
+from tkinter import messagebox
+from HttpMain import enviar_datos_con_token, obtener_id_por_string
+
+
+ #Configuración de MessageBox
+def show_message(title, message):
+    root = tk.Tk()
+    root.withdraw()
+    messagebox.showinfo(title, message)
+    root.destroy()
+
+
+username = "Admin"
+password = "Response123"
 # Leer nuestro modelo
-model = YOLO("Model2.pt")
+model = YOLO("Model.pt")
 
 # Realizar VideoCaptura
 cap = cv2.VideoCapture(0)
+
+# Variables para seguimiento
+width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))  # Ancho de la cámara
+middle_line = width // 2  # Línea divisoria de entrada/salida
+last_seen_time = {}  # Última vez que se vio cada producto
+direction_log = {}  # Última dirección conocida de cada producto (entrada o salida)
+disappear_threshold = 3  # Tiempo de desaparición para confirmar movimiento (en segundos)
 
 # Variables para seguimiento
 width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))  # Ancho de la cámara
@@ -34,6 +58,8 @@ disappear_threshold = 3  # Tiempo de desaparición para confirmar movimiento (en
 while True:
     # Leer nuestros fotogramas
     ret, frame = cap.read()
+    if not ret:
+        break
     if not ret:
         break
 
@@ -64,8 +90,8 @@ while True:
         last_seen_time[product_name] = current_time
 
     # Mostrar los productos detectados en este cuadro, si hay alguno
-    if detected_products:
-        products_list = ", ".join(detected_products)
+   # if detected_products:
+    #    products_list = ", ".join(detected_products)
        ## show_message("Productos Detectados", f"Productos en pantalla: {products_list}")
 
     # Comprobar productos que ya no están presentes
@@ -95,9 +121,12 @@ while True:
     cv2.imshow("DETECCION", anotaciones)
 
     # Cerrar el programa al presionar Esc
+    # Cerrar el programa al presionar Esc
     if cv2.waitKey(1) == 27:
         break
 
 # Liberamos el recurso de la cámara y cerramos ventanas
+# Liberamos el recurso de la cámara y cerramos ventanas
 cap.release()
 cv2.destroyAllWindows()
+

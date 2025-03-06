@@ -1,0 +1,12 @@
+.modal-dialog {
+  max-width: 90% !important;
+}
+
+.groups {
+  padding-top: 10px;
+}
+
+.groups > div {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}

@@ -36,10 +36,6 @@ def obtener_token(username, password):
 def enviar_datos_con_token(username, password, datos):
     """
     Función para enviar datos JSON a una API protegida usando un token JWT
-    :param username: Nombre de usuario
-    :param password: Contraseña del usuario
-    :param datos: Datos a enviar en formato JSON
-    :return: La respuesta de la API, o None si ocurre un error
     """
     # Obtener el token
     tokens = obtener_token(username, password)
@@ -52,13 +48,11 @@ def enviar_datos_con_token(username, password, datos):
             'Authorization': f'Bearer {access_token}',
             'Content-Type': 'application/json'  # Indicamos que vamos a enviar JSON
         }
-
         # Convertir los datos a JSON (si no es un diccionario ya)
         json_data = json.dumps(datos)
 
         # Realizar la solicitud POST con los datos en formato JSON
         response = requests.post(SEND_DATA_URL, headers=headers, data=json_data)
-
         if response.status_code == 201:
             # Si la solicitud fue exitosa, devolver la respuesta
             return response.json()

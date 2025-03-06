@@ -1,0 +1,45 @@
+.comboBox {
+  width: 25% !important;
+}
+
+.controls {
+  width: 50%;
+}
+
+.inputGroup {
+  width: 13rem !important;
+}
+
+.footerBar {
+  height: 3rem;
+}
+
+.salesPage {
+  position: relative;
+  max-height: 93%;
+  height: 93%;
+}
+
+.ModalBarcode {
+  width: 40% !important;
+  position: absolute;
+  transform: translate(92%, 63%);
+}
+
+.footerContainer {
+  height: 42%;
+  padding: 1px;
+}
+
+.productsContainer {
+  height: 90%;
+  border: 1px solid lightgray;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.no-focus-outline:focus{
+  outline: none;
+}

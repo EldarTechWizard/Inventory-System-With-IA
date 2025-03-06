@@ -4,9 +4,9 @@ import Header from "../layouts/header";
 
 function MainComponent({ children }) {
   return (
-    <div className="d-flex h-100">
+    <div className="d-flex h-100 w-100">
       <Sidebar />
-      <div className="w-100 h-100">
+      <div className="h-100 relative dashboard">
         <Header />
         {children}
       </div>
