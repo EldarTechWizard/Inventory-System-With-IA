@@ -1,7 +1,0 @@
-[
-  {
-    "model": "ApiRest.category",
-    "pk": 1,
-    "fields": { "category_name": "test", "description": "ad" }
-  }
-]

@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./Api/InventorySystem
+    container_name: django_inventory_system
+    volumes:
+      - ./Api/InventorySystem:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - ./Api/InventorySystem/config/.env
+
+  frontend:
+    build:
+      context: ./Web/React/inventory-system-react
+    container_name: react_inventory_system
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./Web/React/inventory-system-react:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    stdin_open: true
+    tty: true
+
+  db:
+    image: mysql:8
+    container_name: inventory_db
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=inventory_system_db
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:

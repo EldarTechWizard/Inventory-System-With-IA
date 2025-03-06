@@ -1,17 +1,17 @@
 from rest_framework.views import APIView
-from rest_framework import serializers
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import generics,status
+from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from django.utils import timezone
 from datetime import timedelta
-from .permissions import ManagerPermissions,EmployeePermissions,WarehouseManagerPermissions
+from .permissions import EmployeePermissions, WarehouseManagerPermissions
 from django.db import transaction
-from django.shortcuts import get_object_or_404
-from .filters import (InventoryMovementFilter,OrderFilter,ProductFilter)
+from .filters import (InventoryMovementFilter,
+                      OrderFilter,
+                      ProductFilter)
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
-from django.db.models import Sum, F, Value
+from django.db.models import Sum, F
 from django.utils.dateparse import parse_date
 from .models import (
     Category,
@@ -33,14 +33,15 @@ from .serializers import (
     SupplierSerializer,
     CustomTokenObtainPairSerializer,
     TopSellingProductSerializer,
-    LeastSellingProductSerializer,
     ExpensesSerializer
 )
 
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
 
 # Product Views
 class ProductListCreate(generics.ListCreateAPIView):
@@ -58,10 +59,12 @@ class ProductListCreate(generics.ListCreateAPIView):
 
         serializer.save()
 
+
 class ProductUpdate(generics.RetrieveUpdateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [WarehouseManagerPermissions]
+
 
 class ProductListByCategoryView(APIView):
     def get(self, request, category_id, format=None):
@@ -69,6 +72,7 @@ class ProductListByCategoryView(APIView):
         products = Product.objects.filter(category__category_id=category_id)
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
+
 
 class ProductBelowMinimumStockView(generics.ListAPIView):
     queryset = Product.objects.all()
@@ -93,6 +97,7 @@ class ProductApproachingExpirationView(generics.ListAPIView):
             is_active=True
         )
 
+
 class ExpiredProductsView(generics.ListAPIView):
     serializer_class = ProductSerializer
 
@@ -109,6 +114,7 @@ class CategoryListCreate(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [IsAuthenticated]
+
 
 class CategoryUpdate(generics.RetrieveUpdateAPIView):
     queryset = Category.objects.all()
@@ -136,10 +142,10 @@ class OrderListCreate(generics.ListCreateAPIView):
     filterset_class = OrderFilter
 
     def perform_create(self, serializer):
-        validated_data = serializer.validated_data
+        serializer.validated_data
 
         with transaction.atomic():
-            order = serializer.save(user=self.request.user)
+            serializer.save(user=self.request.user)
 
 
 class OrderUpdate(generics.RetrieveUpdateAPIView):
@@ -156,7 +162,6 @@ class OrderDetailListCreate(generics.ListAPIView):
     def perform_create(self, serializer):
         if serializer.is_valid():
             serializer.save()
-
 
 
 class OrderDetailUpdate(generics.RetrieveUpdateAPIView):
@@ -177,7 +182,6 @@ class InventoryMovementListCreate(generics.ListCreateAPIView):
     filterset_class = InventoryMovementFilter
 
 
-
 class InventoryMovementUpdate(generics.RetrieveUpdateAPIView):
     queryset = InventoryMovement.objects.all()
     serializer_class = InventoryMovementSerializer
@@ -195,6 +199,7 @@ class SupplierUpdate(generics.RetrieveUpdateAPIView):
     serializer_class = SupplierSerializer
     permission_classes = [WarehouseManagerPermissions]
 
+
 class ExpensesListCreate(generics.ListCreateAPIView):
     queryset = Expenses.objects.all()
     serializer_class = ExpensesSerializer
@@ -203,10 +208,12 @@ class ExpensesListCreate(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+
 class ExpensesUpdate(generics.RetrieveUpdateAPIView):
     queryset = Expenses.objects.all()
     serializer_class = ExpensesSerializer
     permission_classes = [WarehouseManagerPermissions]
+
 
 class LessSellingProductsListView(generics.ListAPIView):
     serializer_class = TopSellingProductSerializer
@@ -245,8 +252,6 @@ class LessSellingProductsListView(generics.ListAPIView):
             })
 
         return less_sold_data
-
-
 
 
 class TopSellingProductsListView(generics.ListAPIView):

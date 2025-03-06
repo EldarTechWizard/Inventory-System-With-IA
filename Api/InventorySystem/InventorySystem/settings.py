@@ -17,6 +17,16 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+#STATICFILES_DIRS = [
+#    os.path.join(BASE_DIR,'build/static'),  # Path to React build static
+#]
+
+#STATIC_ROOT = 'staticfiles'
+
+#STATIC_URL = '/static/'
+
+
 # Cargar el archivo .env desde la carpeta config
 dotenv_path = BASE_DIR / 'config' / '.env'
 
@@ -30,9 +40,9 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = ['192.168.1.68','localhost','127.0.0.1','192.168.1.21']
+ALLOWED_HOSTS = ['*']
 
-
+STATIC_URL = '/static/'
 # Application definition
 
 INSTALLED_APPS = [
@@ -51,7 +61,6 @@ INSTALLED_APPS = [
 ]
 
 
-
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -61,6 +70,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 
 ]
 
@@ -70,6 +80,9 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
+
+CORS_ALLOW_ALL_ORIGINS = True
+
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
@@ -105,7 +118,7 @@ DATABASES = {
         'NAME': os.getenv("DATABASE_NAME"),       # Nombre de la base de datos
         'USER': os.getenv("DATABASE_USER"),       # Usuario de la base de datos
         'PASSWORD': os.getenv("DATABASE_PASSWORD"), # Contraseña del usuario
-        'HOST': os.getenv("DATABASE_HOST", 'localhost'), # Host de la base de datos
+        'HOST': os.getenv("DATABASE_HOST", 'db'), # Host de la base de datos
         'PORT': os.getenv("DATABASE_PORT", '3306'),     # Puerto de la base de datos
     }
 }
@@ -146,7 +159,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
